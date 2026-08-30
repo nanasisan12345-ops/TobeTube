@@ -1,0 +1,15 @@
+{
+  "name": "tobetube",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "validate:data": "node scripts/validate-data.mjs",
+    "validate:site": "node scripts/validate-site.mjs",
+    "validate:youtube": "node --use-system-ca scripts/validate-youtube.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

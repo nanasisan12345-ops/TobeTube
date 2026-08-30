@@ -1,0 +1,58 @@
+[
+  {
+    "id": "game",
+    "name": "ゲーム",
+    "description": "新作・名作・遊び方",
+    "color": "#7158e8",
+    "icon": "gamepad"
+  },
+  {
+    "id": "music",
+    "name": "音楽",
+    "description": "MV・ライブ・名曲",
+    "color": "#e0569b",
+    "icon": "music"
+  },
+  {
+    "id": "animals",
+    "name": "動物",
+    "description": "野生・ペット・生態",
+    "color": "#d68d3c",
+    "icon": "paw"
+  },
+  {
+    "id": "cooking",
+    "name": "料理",
+    "description": "レシピ・職人技・食",
+    "color": "#e35d55",
+    "icon": "cooking"
+  },
+  {
+    "id": "travel",
+    "name": "旅",
+    "description": "街歩き・絶景・文化",
+    "color": "#168aad",
+    "icon": "compass"
+  },
+  {
+    "id": "science",
+    "name": "科学と宇宙",
+    "description": "自然・宇宙・テクノロジー",
+    "color": "#3974d8",
+    "icon": "planet"
+  },
+  {
+    "id": "learning",
+    "name": "学びと雑学",
+    "description": "歴史・仕組み・ひらめき",
+    "color": "#4a9d7c",
+    "icon": "bulb"
+  },
+  {
+    "id": "relax",
+    "name": "リラックス",
+    "description": "作業・休憩・落ち着く音",
+    "color": "#8370c8",
+    "icon": "waves"
+  }
+]

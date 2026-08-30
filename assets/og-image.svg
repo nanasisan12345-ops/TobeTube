@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(170 90) rotate(35) scale(650 460)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7AE2C3" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#7AE2C3" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#1D2236"/>
+      <stop offset="1" stop-color="#121625"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#0C0E18"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <circle cx="1085" cy="45" r="240" fill="#FF5C58" opacity=".08"/>
+  <g transform="translate(90 82)">
+    <path d="M0 0 70 30 0 60l13-30L0 0Z" fill="#FF5C58"/>
+    <path d="m13 30 21-9v18l-21-9Z" fill="#0C0E18"/>
+    <text x="88" y="50" fill="#F8F8FB" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="50" font-weight="700">TobeTube</text>
+  </g>
+  <text x="90" y="300" fill="#F8F8FB" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="74" font-weight="700">ジャンルを選んで、</text>
+  <text x="90" y="396" fill="#FF746F" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="74" font-weight="700">まだ知らない動画へ。</text>
+  <text x="94" y="485" fill="#A4AABD" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="30">YouTube動画をランダムに発掘しよう。</text>
+  <g transform="translate(912 392)">
+    <rect width="180" height="94" rx="28" fill="url(#panel)" stroke="#32384F"/>
+    <path d="m67 25 51 22-51 22 9-22-9-22Z" fill="#FF5C58"/>
+  </g>
+</svg>

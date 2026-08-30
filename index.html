@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ja" data-theme="dark">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="ジャンルを選んで、まだ知らない動画へ。YouTube動画をランダムに発掘できるWebサービス。">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="theme-color" content="#111426">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ja_JP">
+    <meta property="og:site_name" content="TobeTube">
+    <meta property="og:title" content="TobeTube">
+    <meta property="og:description" content="ジャンルを選んで、まだ知らない動画へ。YouTube動画をランダムに発掘できるWebサービス。">
+    <meta property="og:image" content="./assets/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TobeTube">
+    <meta name="twitter:description" content="ジャンルを選んで、まだ知らない動画へ。YouTube動画をランダムに発掘できるWebサービス。">
+    <meta name="twitter:image" content="./assets/og-image.png">
+    <title>TobeTube | ジャンルから動画をランダム発掘</title>
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./styles/main.css">
+    <script type="module" src="./js/app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">メインコンテンツへ移動</a>
+
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="TobeTube トップへ">
+        <svg class="brand-mark" viewBox="0 0 44 44" aria-hidden="true">
+          <path d="M8 10.5 36.5 22 8 33.5l5.2-11.5L8 10.5Z" fill="currentColor"/>
+          <path d="m13.2 22 8.7-3.6v7.2L13.2 22Z" fill="var(--surface-deep)"/>
+        </svg>
+        <span>TobeTube</span>
+      </a>
+
+      <nav class="header-actions" aria-label="補助メニュー">
+        <button class="icon-button" id="collection-button" type="button" aria-label="お気に入りと履歴を開く" aria-controls="collection-dialog">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.2 3.7 12a5.2 5.2 0 0 1 7.4-7.3l.9.9.9-.9a5.2 5.2 0 0 1 7.4 7.3L12 20.2Z"/></svg>
+          <span class="header-action-label">コレクション</span>
+        </button>
+        <button class="icon-button" id="theme-button" type="button" aria-label="表示テーマを切り替える">
+          <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.1A8 8 0 0 1 8.9 3.5 8.5 8.5 0 1 0 20.5 15Z"/></svg>
+          <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">RANDOM VIDEO DISCOVERY</p>
+          <h1 id="hero-title">ジャンルを選んで、<br><span>まだ知らない動画へ。</span></h1>
+          <p class="hero-description">検索しなくていい。気分に近いジャンルをひとつ選ぶだけで、次の一本へ飛べます。</p>
+        </div>
+
+        <div class="genre-panel" aria-labelledby="genre-title">
+          <div class="section-heading">
+            <div>
+              <p class="step-label">STEP 1</p>
+              <h2 id="genre-title">今日は何を見る？</h2>
+            </div>
+            <button class="text-button" id="surprise-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+              完全おまかせ
+            </button>
+          </div>
+          <div class="genre-grid" id="genre-grid" aria-live="polite">
+            <div class="genre-skeleton" aria-hidden="true"></div>
+            <div class="genre-skeleton" aria-hidden="true"></div>
+            <div class="genre-skeleton" aria-hidden="true"></div>
+            <div class="genre-skeleton" aria-hidden="true"></div>
+          </div>
+          <button class="primary-button launch-button" id="launch-button" type="button" disabled>
+            <span id="launch-label">ジャンルを選んでください</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <p class="keyboard-hint"><kbd>N</kbd> 次の動画 <span aria-hidden="true">/</span> <kbd>F</kbd> お気に入り</p>
+        </div>
+      </section>
+
+      <section class="player-section" id="player-section" aria-labelledby="player-heading" hidden>
+        <div class="player-layout">
+          <div class="player-column">
+            <div class="player-frame" id="player-frame">
+              <div id="youtube-player"></div>
+              <div class="player-loading" id="player-loading" role="status">
+                <span class="shuffle-orbit" aria-hidden="true"></span>
+                <span>次の出会いを探しています</span>
+              </div>
+            </div>
+            <div class="player-error" id="player-error" role="alert" hidden>
+              <p>この動画は再生できないようです。別の動画へ進めます。</p>
+              <button class="secondary-button" id="error-next-button" type="button">今すぐ次へ</button>
+            </div>
+          </div>
+
+          <aside class="video-panel">
+            <p class="now-playing"><span></span> NOW DISCOVERING</p>
+            <p class="video-genre" id="video-genre">ジャンル</p>
+            <h2 id="player-heading">動画タイトル</h2>
+            <p class="video-channel" id="video-channel">チャンネル名</p>
+            <div class="tag-list" id="tag-list" aria-label="動画の特徴"></div>
+
+            <div class="video-actions">
+              <button class="primary-button next-button" id="next-button" type="button">
+                <span>次の動画へ</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+              <button class="secondary-button favorite-button" id="favorite-button" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.2 3.7 12a5.2 5.2 0 0 1 7.4-7.3l.9.9.9-.9a5.2 5.2 0 0 1 7.4 7.3L12 20.2Z"/></svg>
+                <span>お気に入り</span>
+              </button>
+            </div>
+            <button class="share-button" id="share-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.7 6.6-4.3M8.7 13.3l6.6 4.3"/></svg>
+              この動画を共有
+            </button>
+            <p class="video-help">再生できないときは「次の動画へ」を押してください。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="how-it-works" aria-labelledby="how-title">
+        <div class="section-intro">
+          <p class="eyebrow">HOW IT WORKS</p>
+          <h2 id="how-title">迷わず、3ステップ。</h2>
+        </div>
+        <ol class="steps">
+          <li><span>01</span><div><h3>気分で選ぶ</h3><p>検索ワードは不要。ジャンルをひとつ選びます。</p></div></li>
+          <li><span>02</span><div><h3>動画へ飛ぶ</h3><p>登録された動画から、直近の重複を避けて抽選します。</p></div></li>
+          <li><span>03</span><div><h3>次へ進む</h3><p>気分と違ったら、ためらわず次の一本へ。</p></div></li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <a class="brand footer-brand" href="./">TobeTube</a>
+        <p>ジャンルを選んで、まだ知らない動画へ。</p>
+      </div>
+      <p class="disclaimer">TobeTubeはYouTube公式サービスではありません。動画はYouTubeの埋め込み機能を利用しています。</p>
+    </footer>
+
+    <dialog class="collection-dialog" id="collection-dialog" aria-labelledby="collection-title">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">YOUR COLLECTION</p>
+          <h2 id="collection-title">見つけた動画</h2>
+        </div>
+        <button class="icon-button close-button" id="collection-close-button" type="button" aria-label="閉じる">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg>
+        </button>
+      </div>
+      <div class="dialog-tabs" role="tablist" aria-label="コレクションの種類">
+        <button id="favorites-tab" role="tab" aria-selected="true" aria-controls="favorites-panel" type="button">お気に入り <span id="favorite-count">0</span></button>
+        <button id="history-tab" role="tab" aria-selected="false" aria-controls="history-panel" type="button">最近見た動画 <span id="history-count">0</span></button>
+      </div>
+      <div class="collection-panel" id="favorites-panel" role="tabpanel" aria-labelledby="favorites-tab"></div>
+      <div class="collection-panel" id="history-panel" role="tabpanel" aria-labelledby="history-tab" hidden></div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

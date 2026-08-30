@@ -1,0 +1,41 @@
+[
+  {"id":"HK9PLTMZzy4","title":"Nintendo Switch 紹介映像","channel":"Nintendo 公式チャンネル","genre":"game","duration":"short","tags":["公式","ゲーム機"]},
+  {"id":"0QeqO0kFz-E","title":"Nintendo Switch 2 – Launch Trailer","channel":"Nintendo of America","genre":"game","duration":"short","tags":["公式","ゲーム機"]},
+  {"id":"uHGShqcAHlQ","title":"The Legend of Zelda: Tears of the Kingdom – Official Trailer #3","channel":"Nintendo of America","genre":"game","duration":"short","tags":["公式","トレーラー"]},
+  {"id":"Pi-MRZBP91I","title":"Sequel to The Legend of Zelda: Breath of the Wild - E3 2021 Teaser","channel":"Nintendo of America","genre":"game","duration":"short","tags":["公式","発見"]},
+
+  {"id":"dQw4w9WgXcQ","title":"Rick Astley - Never Gonna Give You Up","channel":"Rick Astley","genre":"music","duration":"short","tags":["洋楽","80年代"]},
+  {"id":"kJQP7kiw5Fk","title":"Luis Fonsi - Despacito ft. Daddy Yankee","channel":"LuisFonsiVEVO","genre":"music","duration":"short","tags":["洋楽","ラテン"]},
+  {"id":"JGwWNGJdvx8","title":"Ed Sheeran - Shape of You","channel":"Ed Sheeran","genre":"music","duration":"short","tags":["洋楽","ポップ"]},
+  {"id":"RgKAFK5djSk","title":"Wiz Khalifa - See You Again ft. Charlie Puth","channel":"Wiz Khalifa Music","genre":"music","duration":"short","tags":["洋楽","ヒット曲"]},
+
+  {"id":"XieK_DrDYLM","title":"Amazing Animals of Africa","channel":"BBC Earth","genre":"animals","duration":"medium","tags":["野生動物","アフリカ"]},
+  {"id":"GLPjP3hjhMM","title":"Nature's Oddest Looking Animals | Top 5","channel":"BBC Earth","genre":"animals","duration":"medium","tags":["野生動物","生態"]},
+  {"id":"4zNsGgPGJ4U","title":"Best of North American Animals | Top 5","channel":"BBC Earth","genre":"animals","duration":"medium","tags":["野生動物","北米"]},
+  {"id":"npi99Y-MkN0","title":"Top 5 Killer Crocodile Moments","channel":"BBC Earth","genre":"animals","duration":"medium","tags":["ワニ","野生動物"]},
+
+  {"id":"O-yiVtGrRwY","title":"How I Make Some Of My Most Viral Tasty Recipes","channel":"Tasty","genre":"cooking","duration":"medium","tags":["レシピ","人気料理"]},
+  {"id":"n4IH8-io6Dw","title":"WTF is shortening?","channel":"Adam Ragusea","genre":"cooking","duration":"short","tags":["食材","料理の知識"]},
+  {"id":"uq1uP-b7KxY","title":"Gordon Ramsay Makes Scrambled Eggs","channel":"Jimmy Kimmel Live","genre":"cooking","duration":"short","tags":["卵料理","シェフ"]},
+  {"id":"qWbHSOplcvY","title":"海外旅行で思い出す韓国料理 キムチチゲ","channel":"백종원 PAIK JONG WON","genre":"cooking","duration":"medium","tags":["韓国料理","キムチチゲ"]},
+
+  {"id":"3GWpYqfX2Xg","title":"Top 10 Best Places to Visit in London","channel":"Destination Diaries","genre":"travel","duration":"medium","tags":["ロンドン","街歩き"]},
+  {"id":"ylrF1GV7AVY","title":"10 Best Places to Visit in Egypt","channel":"Destination Diaries","genre":"travel","duration":"medium","tags":["エジプト","歴史"]},
+  {"id":"-VRfA1b6vD4","title":"10 Best Places to Visit in Italy","channel":"Destination Diaries","genre":"travel","duration":"medium","tags":["イタリア","絶景"]},
+  {"id":"C3rtgC3qOr8","title":"10 Best Places to Visit in Switzerland","channel":"Destination Diaries","genre":"travel","duration":"medium","tags":["スイス","絶景"]},
+
+  {"id":"21X5lGlDOfg","title":"NASA Live: Official Stream of NASA TV","channel":"NASA","genre":"science","duration":"long","tags":["宇宙","ライブ"]},
+  {"id":"yQP4UJhNn0I","title":"Just How Small is an Atom?","channel":"TED-Ed","genre":"science","duration":"short","tags":["科学","原子"]},
+  {"id":"libKVRa01L8","title":"Solar System 101","channel":"National Geographic","genre":"science","duration":"medium","tags":["宇宙","太陽系"]},
+  {"id":"Qd6nLM2QlWw","title":"Exploring Our Solar System: Planets and Space for Kids","channel":"Free School","genre":"science","duration":"medium","tags":["宇宙","太陽系"]},
+
+  {"id":"NKmGVE85GUU","title":"Why can't you divide by zero?","channel":"TED-Ed","genre":"learning","duration":"short","tags":["数学","雑学"]},
+  {"id":"BkcXbx5rSzw","title":"The Science of Aging","channel":"AsapSCIENCE","genre":"learning","duration":"short","tags":["人体","学び"]},
+  {"id":"-O5kNPlUV7w","title":"Why Beautiful Things Make us Happy","channel":"Kurzgesagt – In a Nutshell","genre":"learning","duration":"short","tags":["デザイン","心理"]},
+  {"id":"H14bBuluwB8","title":"Grit: The Power of Passion and Perseverance","channel":"TED","genre":"learning","duration":"short","tags":["教養","心理"]},
+
+  {"id":"n61ULEU7CO0","title":"Best of lofi hip hop 2021","channel":"Lofi Girl","genre":"relax","duration":"long","tags":["作業用","ローファイ"]},
+  {"id":"jfKfPfyJRdk","title":"lofi hip hop radio - beats to relax/study to","channel":"Lofi Girl","genre":"relax","duration":"long","tags":["作業用","ライブ"]},
+  {"id":"DWcJFNfaw9c","title":"lofi hip hop radio - beats to sleep/chill to","channel":"Lofi Girl","genre":"relax","duration":"long","tags":["休憩","ローファイ"]},
+  {"id":"5qap5aO4i9A","title":"lofi hip hop radio - beats to relax/study to","channel":"Lofi Girl","genre":"relax","duration":"long","tags":["作業用","ローファイ"]}
+]
