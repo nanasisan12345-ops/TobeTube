@@ -29,6 +29,37 @@ export function pickRandomVideo(
   return finalPool[Math.max(0, index)];
 }
 
+export function pickDiscoveryVideo(
+  videos,
+  { historyIds = [], recentIds = [], currentGenre = null, random = Math.random } = {},
+) {
+  if (!Array.isArray(videos) || videos.length === 0) {
+    return null;
+  }
+
+  const historySet = new Set(historyIds);
+  const unseen = videos.filter((video) => !historySet.has(video.id));
+  if (unseen.length > 0) {
+    const unseenDifferentGenre = currentGenre
+      ? unseen.filter((video) => video.genre !== currentGenre)
+      : unseen;
+    return pickFromPool(unseenDifferentGenre.length > 0 ? unseenDifferentGenre : unseen, random);
+  }
+
+  const differentGenre = currentGenre
+    ? videos.filter((video) => video.genre !== currentGenre)
+    : videos;
+  return pickRandomVideo(differentGenre.length > 0 ? differentGenre : videos, {
+    recentIds,
+    random,
+  });
+}
+
+function pickFromPool(pool, random) {
+  const index = Math.min(Math.floor(random() * pool.length), pool.length - 1);
+  return pool[Math.max(0, index)] ?? null;
+}
+
 export function pushRecentId(recentIds, videoId, limit = DEFAULT_RECENT_LIMIT) {
   if (!videoId) {
     return [...recentIds].slice(0, limit);

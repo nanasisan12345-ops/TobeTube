@@ -1,8 +1,8 @@
 [
   {"id":"HK9PLTMZzy4","title":"Nintendo Switch 紹介映像","channel":"Nintendo 公式チャンネル","genre":"game","duration":"short","tags":["公式","ゲーム機"]},
-  {"id":"0QeqO0kFz-E","title":"Nintendo Switch 2 – Launch Trailer","channel":"Nintendo of America","genre":"game","duration":"short","tags":["公式","ゲーム機"]},
-  {"id":"uHGShqcAHlQ","title":"The Legend of Zelda: Tears of the Kingdom – Official Trailer #3","channel":"Nintendo of America","genre":"game","duration":"short","tags":["公式","トレーラー"]},
-  {"id":"Pi-MRZBP91I","title":"Sequel to The Legend of Zelda: Breath of the Wild - E3 2021 Teaser","channel":"Nintendo of America","genre":"game","duration":"short","tags":["公式","発見"]},
+  {"id":"unYFdcEjV9k","title":"ASTRO BOT - Launch Trailer","channel":"PlayStation","genre":"game","duration":"short","tags":["公式","PlayStation"]},
+  {"id":"VyCs1k8J8MM","title":"Xbox Games Showcase 2024 – Official Announce Trailer","channel":"Xbox","genre":"game","duration":"short","tags":["公式","Xbox"]},
+  {"id":"Cm2_drGLGbc","title":"10 Game Design Lessons from 10 Years of GMTK","channel":"Game Maker's Toolkit","genre":"game","duration":"medium","tags":["ゲーム設計","解説"]},
 
   {"id":"dQw4w9WgXcQ","title":"Rick Astley - Never Gonna Give You Up","channel":"Rick Astley","genre":"music","duration":"short","tags":["洋楽","80年代"]},
   {"id":"kJQP7kiw5Fk","title":"Luis Fonsi - Despacito ft. Daddy Yankee","channel":"LuisFonsiVEVO","genre":"music","duration":"short","tags":["洋楽","ラテン"]},
@@ -37,5 +37,35 @@
   {"id":"n61ULEU7CO0","title":"Best of lofi hip hop 2021","channel":"Lofi Girl","genre":"relax","duration":"long","tags":["作業用","ローファイ"]},
   {"id":"jfKfPfyJRdk","title":"lofi hip hop radio - beats to relax/study to","channel":"Lofi Girl","genre":"relax","duration":"long","tags":["作業用","ライブ"]},
   {"id":"DWcJFNfaw9c","title":"lofi hip hop radio - beats to sleep/chill to","channel":"Lofi Girl","genre":"relax","duration":"long","tags":["休憩","ローファイ"]},
-  {"id":"5qap5aO4i9A","title":"lofi hip hop radio - beats to relax/study to","channel":"Lofi Girl","genre":"relax","duration":"long","tags":["作業用","ローファイ"]}
+  {"id":"5qap5aO4i9A","title":"lofi hip hop radio - beats to relax/study to","channel":"Lofi Girl","genre":"relax","duration":"long","tags":["作業用","ローファイ"]},
+
+  {"id":"Dqevl3w0_6s","title":"Lionel Messi at the Olympics! | Athlete Highlights","channel":"Olympics","genre":"sports","duration":"short","tags":["サッカー","オリンピック"]},
+  {"id":"tTK90W_2Yh8","title":"The Best Ever FIFA World Cup Goals | Part 1","channel":"FIFA","genre":"sports","duration":"medium","tags":["サッカー","名場面"]},
+  {"id":"wBbA9MrKL8Y","title":"The Very Best Points from Wimbledon 2025","channel":"Wimbledon","genre":"sports","duration":"medium","tags":["テニス","名場面"]},
+  {"id":"AW1sKgAaXNk","title":"Top 10 NBA Plays","channel":"NBA","genre":"sports","duration":"short","tags":["バスケットボール","好プレー"]},
+
+  {"id":"OqQk7kLuaK4","title":"How YouTube Works","channel":"Computerphile","genre":"technology","duration":"medium","tags":["インターネット","仕組み"]},
+  {"id":"8VsiYWW9r48","title":"Machine Code Explained","channel":"Computerphile","genre":"technology","duration":"medium","tags":["コンピューター","解説"]},
+  {"id":"zDAYZU4A3w0","title":"Google Data Center 360° Tour","channel":"Google Cloud Tech","genre":"technology","duration":"medium","tags":["データセンター","360度"]},
+  {"id":"zRwPSFpLX8I","title":"Google Container Data Center Tour","channel":"Google","genre":"technology","duration":"medium","tags":["データセンター","技術"]},
+
+  {"id":"Z3Wvw6BivVI","title":"Ancient Egypt: Crash Course World History #4","channel":"CrashCourse","genre":"history","duration":"medium","tags":["古代エジプト","文明"]},
+  {"id":"sohXPx_XZ6Y","title":"Mesopotamia: Crash Course World History #3","channel":"CrashCourse","genre":"history","duration":"medium","tags":["メソポタミア","文明"]},
+  {"id":"oPf27gAup9U","title":"The Roman Empire: Crash Course World History #10","channel":"CrashCourse","genre":"history","duration":"medium","tags":["ローマ","世界史"]},
+  {"id":"vfe-eNq-Qyg","title":"The Silk Road and Ancient Trade: Crash Course World History #9","channel":"CrashCourse","genre":"history","duration":"medium","tags":["シルクロード","交易"]},
+
+  {"id":"qQTVuRrZO8w","title":"Primitive Technology: New Area Starting from Scratch","channel":"Primitive Technology","genre":"making","duration":"medium","tags":["原始技術","建築"]},
+  {"id":"nCKkHqlx9dE","title":"Primitive Technology: Wattle and Daub Hut","channel":"Primitive Technology","genre":"making","duration":"medium","tags":["原始技術","小屋づくり"]},
+  {"id":"4JQ4O1SPHSY","title":"Adam Savage's One Day Builds: How to Build a $5 Sword!","channel":"Adam Savage's Tested","genre":"making","duration":"medium","tags":["工作","プロップ"]},
+  {"id":"mCmaT2mha7U","title":"Adam Savage's One Day Build: Assassin's Sword!","channel":"Adam Savage's Tested","genre":"making","duration":"medium","tags":["職人技","金属加工"]},
+
+  {"id":"rjNGj04DAAI","title":"Vincent van Gogh: The Starry Night","channel":"The Museum of Modern Art","genre":"art","duration":"short","tags":["ゴッホ","美術館"]},
+  {"id":"tx5kJvI14Jg","title":"Learning How to Draw","channel":"Proko","genre":"art","duration":"medium","tags":["デッサン","描き方"]},
+  {"id":"miJ19Kz_i3Y","title":"Bob Ross - Final Grace","channel":"Bob Ross","genre":"art","duration":"medium","tags":["風景画","絵画"]},
+  {"id":"vgbMONXc9Cs","title":"Bob Ross - Northern Lights","channel":"Bob Ross","genre":"art","duration":"medium","tags":["オーロラ","絵画"]},
+
+  {"id":"xlo1xQneAEA","title":"NASA Launches the World's Most Powerful Rocket | Artemis I Highlights","channel":"NASASpaceflight","genre":"vehicles","duration":"short","tags":["ロケット","宇宙"]},
+  {"id":"F077WDnB8P8","title":"How Do Airplanes Fly?","channel":"Sabin Civil Engineering","genre":"vehicles","duration":"medium","tags":["飛行機","仕組み"]},
+  {"id":"LuDN2bCIyus","title":"Ken Block's Gymkhana Five: San Francisco","channel":"DC Shoes","genre":"vehicles","duration":"medium","tags":["自動車","ドライビング"]},
+  {"id":"BBmxFWfX1YQ","title":"Testing a Dream: Boeing 787 Flight Test","channel":"Boeing","genre":"vehicles","duration":"medium","tags":["航空機","テスト飛行"]}
 ]

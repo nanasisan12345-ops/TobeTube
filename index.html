@@ -68,6 +68,17 @@
               完全おまかせ
             </button>
           </div>
+          <div class="mode-switch" aria-label="動画の選び方">
+            <button id="standard-mode-button" type="button" aria-pressed="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h7"/></svg>
+              ジャンル指定
+            </button>
+            <button id="discovery-mode-button" type="button" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3ZM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"/></svg>
+              発掘モード
+            </button>
+          </div>
+          <p class="mode-description" id="mode-description">気分に合うジャンルをひとつ選びます。</p>
           <div class="genre-grid" id="genre-grid" aria-live="polite">
             <div class="genre-skeleton" aria-hidden="true"></div>
             <div class="genre-skeleton" aria-hidden="true"></div>
@@ -130,7 +141,7 @@
           <h2 id="how-title">迷わず、3ステップ。</h2>
         </div>
         <ol class="steps">
-          <li><span>01</span><div><h3>気分で選ぶ</h3><p>検索ワードは不要。ジャンルをひとつ選びます。</p></div></li>
+          <li><span>01</span><div><h3>選び方を決める</h3><p>ジャンル指定か、未視聴優先の発掘モードを選びます。</p></div></li>
           <li><span>02</span><div><h3>動画へ飛ぶ</h3><p>登録された動画から、直近の重複を避けて抽選します。</p></div></li>
           <li><span>03</span><div><h3>次へ進む</h3><p>気分と違ったら、ためらわず次の一本へ。</p></div></li>
         </ol>

@@ -1,6 +1,6 @@
 import { loadCatalog } from "./data-store.js";
 import { YouTubePlayerController } from "./player.js";
-import { pickRandomVideo, pushRecentId } from "./randomizer.js";
+import { pickDiscoveryVideo, pickRandomVideo, pushRecentId } from "./randomizer.js";
 import { createStorage } from "./storage.js";
 
 const iconPaths = {
@@ -12,6 +12,12 @@ const iconPaths = {
   planet: '<circle cx="12" cy="12" r="5"/><path d="M3.5 15.5c-1-1.7 2-5 6.7-7.7s9-3.6 10-1.9-2 5-6.7 7.7-9 3.6-10 1.9Z"/>',
   bulb: '<path d="M9 18h6M10 22h4M8.4 15.2A7 7 0 1 1 15.6 15.2C14.8 15.8 14.5 16.6 14.5 18h-5c0-1.4-.3-2.2-1.1-2.8Z"/>',
   waves: '<path d="M3 8c2.2 0 2.2-2 4.5-2S9.8 8 12 8s2.2-2 4.5-2S18.8 8 21 8M3 13c2.2 0 2.2-2 4.5-2s2.3 2 4.5 2 2.2-2 4.5-2 2.3 2 4.5 2M3 18c2.2 0 2.2-2 4.5-2s2.3 2 4.5 2 2.2-2 4.5-2 2.3 2 4.5 2"/>',
+  trophy: '<path d="M8 4h8v4a4 4 0 0 1-8 0V4ZM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 12v5M8 21h8M9 17h6"/>',
+  chip: '<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 9h6v6H9zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',
+  history: '<path d="M4 5v5h5M5 9a8 8 0 1 1-1 6M12 7v5l3 2"/>',
+  hammer: '<path d="m14 5 5 5M12.5 6.5l3-3 5 5-3 3M13 11 5 19l-2 2M9 15l3 3"/>',
+  palette: '<path d="M12 3a9 9 0 1 0 0 18h1.5a2 2 0 0 0 0-4H12a2 2 0 0 1 0-4h5a4 4 0 0 0 4-4c0-3.3-4-6-9-6Z"/><circle cx="7.5" cy="9" r="1"/><circle cx="10" cy="6.5" r="1"/><circle cx="15" cy="7" r="1"/>',
+  vehicle: '<path d="M5 17h14l-1-6-2-3H8l-2 3-1 6ZM7 17v2M17 17v2M7 13h10M8 8l-1-3M16 8l1-3"/><circle cx="8" cy="16" r="1"/><circle cx="16" cy="16" r="1"/>',
 };
 
 const elements = {
@@ -19,6 +25,9 @@ const elements = {
   launchButton: document.querySelector("#launch-button"),
   launchLabel: document.querySelector("#launch-label"),
   surpriseButton: document.querySelector("#surprise-button"),
+  standardModeButton: document.querySelector("#standard-mode-button"),
+  discoveryModeButton: document.querySelector("#discovery-mode-button"),
+  modeDescription: document.querySelector("#mode-description"),
   playerSection: document.querySelector("#player-section"),
   playerLoading: document.querySelector("#player-loading"),
   playerError: document.querySelector("#player-error"),
@@ -49,6 +58,7 @@ const state = {
   genres: [],
   videos: [],
   selectedGenre: savedState.selectedGenre,
+  mode: savedState.mode,
   currentVideo: null,
   saved: savedState,
   errorTimer: null,
@@ -76,6 +86,7 @@ async function init() {
       state.selectedGenre = null;
     }
     renderGenres();
+    updateModeSelection();
     updateLaunchButton();
     updateCollectionCounts();
     const sharedVideoId = new URL(window.location.href).searchParams.get("v");
@@ -107,11 +118,14 @@ function bindEvents() {
   });
   document.addEventListener("keydown", handleKeyboardShortcut);
   elements.surpriseButton.addEventListener("click", () => {
+    setMode("genre");
     state.selectedGenre = "all";
     updateGenreSelection();
     updateLaunchButton();
     playNext();
   });
+  elements.standardModeButton.addEventListener("click", () => setMode("genre"));
+  elements.discoveryModeButton.addEventListener("click", () => setMode("discovery"));
 }
 
 function renderGenres() {
@@ -142,21 +156,49 @@ function renderGenres() {
 }
 
 function selectGenre(genreId) {
+  state.mode = "genre";
   state.selectedGenre = genreId;
   state.saved.selectedGenre = genreId;
+  state.saved.mode = "genre";
   storage.write(state.saved);
+  updateModeSelection();
   updateGenreSelection();
   updateLaunchButton();
 }
 
+function setMode(mode) {
+  state.mode = mode === "discovery" ? "discovery" : "genre";
+  state.saved.mode = state.mode;
+  storage.write(state.saved);
+  updateModeSelection();
+  updateGenreSelection();
+  updateLaunchButton();
+}
+
+function updateModeSelection() {
+  const isDiscovery = state.mode === "discovery";
+  elements.standardModeButton.setAttribute("aria-pressed", String(!isDiscovery));
+  elements.discoveryModeButton.setAttribute("aria-pressed", String(isDiscovery));
+  elements.genreGrid.dataset.inactive = String(isDiscovery);
+  elements.modeDescription.textContent = isDiscovery
+    ? "全ジャンルから、まだ見ていない動画と直前とは違うジャンルを優先します。"
+    : "気分に合うジャンルをひとつ選びます。";
+  updateGenreSelection();
+}
+
 function updateGenreSelection() {
   for (const button of elements.genreGrid.querySelectorAll(".genre-button")) {
-    button.setAttribute("aria-pressed", String(button.dataset.genreId === state.selectedGenre));
+    button.setAttribute("aria-pressed", String(state.mode === "genre" && button.dataset.genreId === state.selectedGenre));
   }
 }
 
 function updateLaunchButton() {
   const genre = state.genres.find((item) => item.id === state.selectedGenre);
+  if (state.mode === "discovery") {
+    elements.launchButton.disabled = state.videos.length === 0;
+    elements.launchLabel.textContent = "未知の動画を発掘する";
+    return;
+  }
   elements.launchButton.disabled = !state.selectedGenre;
   elements.launchLabel.textContent = state.selectedGenre === "all"
     ? "完全おまかせで飛ぶ"
@@ -166,17 +208,23 @@ function updateLaunchButton() {
 }
 
 async function playNext() {
-  if (!state.selectedGenre || state.videos.length === 0) {
+  if ((state.mode === "genre" && !state.selectedGenre) || state.videos.length === 0) {
     return;
   }
 
   clearTimeout(state.errorTimer);
   state.errorTimer = null;
   elements.playerError.hidden = true;
-  const video = pickRandomVideo(state.videos, {
-    genreId: state.selectedGenre,
-    recentIds: state.saved.recentIds,
-  });
+  const video = state.mode === "discovery"
+    ? pickDiscoveryVideo(state.videos, {
+      historyIds: state.saved.history,
+      recentIds: state.saved.recentIds,
+      currentGenre: state.currentVideo?.genre ?? null,
+    })
+    : pickRandomVideo(state.videos, {
+      genreId: state.selectedGenre,
+      recentIds: state.saved.recentIds,
+    });
 
   if (!video) {
     showToast("このジャンルには再生できる動画がありません。");
@@ -189,8 +237,9 @@ async function playNext() {
 async function playVideo(video) {
   state.currentVideo = video;
   state.saved.recentIds = pushRecentId(state.saved.recentIds, video.id);
-  state.saved.history = pushRecentId(state.saved.history, video.id, 50);
+  state.saved.history = pushRecentId(state.saved.history, video.id, 200);
   state.saved.selectedGenre = state.selectedGenre;
+  state.saved.mode = state.mode;
   storage.write(state.saved);
   renderCurrentVideo(video);
   updateCollectionCounts();
@@ -434,6 +483,8 @@ function renderCatalogError(error) {
   elements.genreGrid.append(message);
   elements.launchButton.disabled = true;
   elements.surpriseButton.disabled = true;
+  elements.standardModeButton.disabled = true;
+  elements.discoveryModeButton.disabled = true;
   console.error(error);
 }
 

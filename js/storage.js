@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tobetube-state-v1";
-const HISTORY_LIMIT = 50;
+const HISTORY_LIMIT = 200;
 const FAVORITES_LIMIT = 100;
 
 const defaultState = Object.freeze({
@@ -7,6 +7,7 @@ const defaultState = Object.freeze({
   history: [],
   recentIds: [],
   selectedGenre: null,
+  mode: "genre",
   theme: "system",
 });
 
@@ -40,6 +41,7 @@ export function sanitizeState(value) {
     history: uniqueStrings(source.history).slice(0, HISTORY_LIMIT),
     recentIds: uniqueStrings(source.recentIds).slice(0, 8),
     selectedGenre: typeof source.selectedGenre === "string" ? source.selectedGenre : null,
+    mode: source.mode === "discovery" ? "discovery" : "genre",
     theme: ["system", "light", "dark"].includes(source.theme) ? source.theme : "system",
   };
 }

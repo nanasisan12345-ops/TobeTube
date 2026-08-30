@@ -54,5 +54,47 @@
     "description": "作業・休憩・落ち着く音",
     "color": "#8370c8",
     "icon": "waves"
+  },
+  {
+    "id": "sports",
+    "name": "スポーツ",
+    "description": "名場面・超絶プレー・挑戦",
+    "color": "#2ba56d",
+    "icon": "trophy"
+  },
+  {
+    "id": "technology",
+    "name": "テクノロジー",
+    "description": "コンピューター・仕組み・未来",
+    "color": "#3f8ee8",
+    "icon": "chip"
+  },
+  {
+    "id": "history",
+    "name": "歴史と文化",
+    "description": "文明・社会・人類の歩み",
+    "color": "#bd7b43",
+    "icon": "history"
+  },
+  {
+    "id": "making",
+    "name": "ものづくり",
+    "description": "工作・職人技・製作工程",
+    "color": "#d76545",
+    "icon": "hammer"
+  },
+  {
+    "id": "art",
+    "name": "アート",
+    "description": "絵画・美術・描き方",
+    "color": "#d95791",
+    "icon": "palette"
+  },
+  {
+    "id": "vehicles",
+    "name": "乗りもの",
+    "description": "車・飛行機・ロケット",
+    "color": "#3b9aa7",
+    "icon": "vehicle"
   }
 ]
