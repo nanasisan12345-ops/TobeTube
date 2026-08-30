@@ -7,10 +7,20 @@ const indexPath = join(root, "index.html");
 const html = await readFile(indexPath, "utf8");
 const errors = [];
 
+for (const requiredPath of ["assets/favicon.svg", "assets/og-image.png", "data/genres.json", "data/videos.json"]) {
+  try {
+    await access(join(root, requiredPath));
+  } catch {
+    errors.push(`公開に必要なファイルが見つかりません: ${requiredPath}`);
+  }
+}
+
 const requiredSnippets = [
   '<html lang="ja"',
   '<meta name="description"',
+  '<link rel="canonical"',
   '<meta property="og:image"',
+  '<meta property="og:url"',
   '<meta name="twitter:card"',
   '<link rel="icon"',
   '<script type="module" src="./js/app.js"',
