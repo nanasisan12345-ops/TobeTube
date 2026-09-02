@@ -1,7 +1,7 @@
 import { loadCatalog } from "./data-store.js";
-import { countryName, createTranslator, genreName, localeForCountry } from "./i18n.js";
+import { countryName, createTranslator, genreName, localeForCountry } from "./i18n.js?v=20260903a";
 import { YouTubePlayerController } from "./player.js";
-import { getEligibleVideos, pickDiscoveryVideo, pickRandomVideo, pushRecentId } from "./randomizer.js";
+import { getEligibleVideos, pickDiscoveryVideo, pickRandomVideo, pushRecentId } from "./randomizer.js?v=20260903a";
 import { createStorage } from "./storage.js";
 
 const iconPaths = {
