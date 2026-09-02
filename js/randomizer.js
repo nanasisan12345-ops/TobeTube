@@ -21,10 +21,14 @@ export function pickRandomVideo(
     return null;
   }
 
+  return pickAvoidingRecent(preferHighViewCount(eligible), recentIds, random);
+}
+
+function pickAvoidingRecent(videos, recentIds, random) {
   const recentSet = new Set(recentIds);
-  const fresh = eligible.filter((video) => !recentSet.has(video.id));
-  const oldestRecentIndex = Math.max(...eligible.map((video) => recentIds.indexOf(video.id)));
-  const leastRecent = eligible.filter((video) => recentIds.indexOf(video.id) === oldestRecentIndex);
+  const fresh = videos.filter((video) => !recentSet.has(video.id));
+  const oldestRecentIndex = Math.max(...videos.map((video) => recentIds.indexOf(video.id)));
+  const leastRecent = videos.filter((video) => recentIds.indexOf(video.id) === oldestRecentIndex);
   const finalPool = fresh.length > 0 ? fresh : leastRecent;
   const index = Math.min(Math.floor(random() * finalPool.length), finalPool.length - 1);
 
@@ -47,23 +51,18 @@ export function pickDiscoveryVideo(
     return null;
   }
 
+  const lowViewPool = preferLowViewCount(eligible);
+  const differentGenre = currentGenre
+    ? lowViewPool.filter((video) => video.genre !== currentGenre)
+    : lowViewPool;
+  const discoveryPool = differentGenre.length > 0 ? differentGenre : lowViewPool;
   const historySet = new Set(historyIds);
-  const unseen = eligible.filter((video) => !historySet.has(video.id));
+  const unseen = discoveryPool.filter((video) => !historySet.has(video.id));
   if (unseen.length > 0) {
-    const unseenDifferentGenre = currentGenre
-      ? unseen.filter((video) => video.genre !== currentGenre)
-      : unseen;
-    const discoveryPool = unseenDifferentGenre.length > 0 ? unseenDifferentGenre : unseen;
-    return pickFromPool(preferLowViewCount(discoveryPool), random);
+    return pickFromPool(unseen, random);
   }
 
-  const differentGenre = currentGenre
-    ? eligible.filter((video) => video.genre !== currentGenre)
-    : eligible;
-  return pickRandomVideo(preferLowViewCount(differentGenre.length > 0 ? differentGenre : eligible), {
-    recentIds,
-    random,
-  });
+  return pickAvoidingRecent(discoveryPool, recentIds, random);
 }
 
 export function preferLowViewCount(videos, ratio = 0.25) {
@@ -73,6 +72,15 @@ export function preferLowViewCount(videos, ratio = 0.25) {
   const poolSize = Math.max(1, Math.ceil(sorted.length * ratio));
   const threshold = sorted[poolSize - 1].viewCount;
   return known.filter((video) => video.viewCount <= threshold);
+}
+
+export function preferHighViewCount(videos, ratio = 0.25) {
+  const known = videos.filter((video) => Number.isFinite(video.viewCount) && video.viewCount >= 0);
+  if (known.length === 0) return videos;
+  const sorted = [...known].sort((left, right) => right.viewCount - left.viewCount);
+  const poolSize = Math.max(1, Math.ceil(sorted.length * ratio));
+  const threshold = sorted[poolSize - 1].viewCount;
+  return known.filter((video) => video.viewCount >= threshold);
 }
 
 function pickFromPool(pool, random) {

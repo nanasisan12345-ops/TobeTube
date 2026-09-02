@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   getEligibleVideos,
+  preferHighViewCount,
   preferLowViewCount,
   pickDiscoveryVideo,
   pickRandomVideo,
@@ -32,6 +33,21 @@ test("直近の動画を候補から外す", () => {
   assert.equal(picked.id, "bbbbbbbbbbb");
 });
 
+test("通常モードは履歴より高再生数を優先する", () => {
+  const pool = [
+    { id: "popular", viewCount: 10000 },
+    { id: "middle", viewCount: 100 },
+    { id: "low", viewCount: 10 },
+    { id: "lowest", viewCount: 1 },
+  ];
+  const picked = pickRandomVideo(pool, {
+    recentIds: ["popular"],
+    random: () => 0,
+  });
+  assert.equal(picked.id, "popular");
+  assert.deepEqual(preferHighViewCount(pool), [pool[0]]);
+});
+
 test("候補を使い切った場合も直前の動画を避ける", () => {
   const picked = pickRandomVideo(videos, {
     genreId: "game",
@@ -49,12 +65,25 @@ test("直近IDは重複を除き上限で切る", () => {
   assert.deepEqual(pushRecentId(["b", "a", "c"], "a", 3), ["a", "b", "c"]);
 });
 
-test("発掘モードは履歴にない動画を優先する", () => {
+test("再生数情報がない場合は履歴にない動画を優先する", () => {
   const picked = pickDiscoveryVideo(videos, {
     historyIds: ["aaaaaaaaaaa", "bbbbbbbbbbb"],
     random: () => 0,
   });
   assert.equal(picked.id, "ccccccccccc");
+});
+
+test("発掘モードは未視聴や別ジャンルより低再生数を優先する", () => {
+  const pool = [
+    { id: "low", genre: "game", viewCount: 10 },
+    { id: "high-unseen", genre: "music", viewCount: 10000 },
+  ];
+  const picked = pickDiscoveryVideo(pool, {
+    historyIds: ["low"],
+    currentGenre: "game",
+    random: () => 0,
+  });
+  assert.equal(picked.id, "low");
 });
 
 test("発掘モードは可能なら直前と違うジャンルを選ぶ", () => {

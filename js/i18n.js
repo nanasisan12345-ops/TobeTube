@@ -91,6 +91,52 @@ const discoveryDescriptions = {
   id: "Memprioritaskan video yang belum ditonton dan sedikit ditonton dalam pilihan.",
   vi: "Ưu tiên video chưa xem và có ít lượt xem trong phạm vi đã chọn.",
 };
+const modeDescriptions = {
+  discoveryDescription: {
+    ...discoveryDescriptions,
+    ja: "選んだ範囲から、再生数の少ない動画を最優先します。視聴履歴は重複回避だけに使います。",
+    en: "Prioritizes videos with fewer views. Watch history is used only to avoid repeats.",
+    ko: "조회수가 적은 영상을 최우선합니다. 시청 기록은 반복을 피할 때만 사용합니다.",
+    fr: "Privilégie avant tout les vidéos peu vues. L’historique sert uniquement à éviter les répétitions.",
+    it: "Dà la massima priorità ai video con meno visualizzazioni. La cronologia serve solo a evitare ripetizioni.",
+    hi: "कम व्यू वाले वीडियो को सबसे पहले दिखाता है। इतिहास केवल दोहराव से बचने के लिए उपयोग होता है।",
+    "pt-BR": "Prioriza primeiro os vídeos com menos visualizações. O histórico serve apenas para evitar repetições.",
+    de: "Videos mit wenigen Aufrufen haben höchste Priorität. Der Verlauf dient nur dazu, Wiederholungen zu vermeiden.",
+    es: "Prioriza ante todo los vídeos con menos visualizaciones. El historial solo evita repeticiones.",
+    th: "ให้ความสำคัญสูงสุดกับวิดีโอที่มียอดชมน้อย ประวัติใช้เพื่อหลีกเลี่ยงวิดีโอซ้ำเท่านั้น",
+    id: "Mengutamakan video dengan sedikit penayangan. Riwayat hanya digunakan untuk menghindari pengulangan.",
+    vi: "Ưu tiên cao nhất cho video có ít lượt xem. Lịch sử chỉ dùng để tránh lặp lại.",
+  },
+  genreDescription: {
+    ja: "選んだ国とジャンルから、人気動画を優先して表示します。",
+    en: "Prioritizes popular videos in the selected country and genre.",
+    ko: "선택한 국가와 장르에서 인기 영상을 우선합니다.",
+    fr: "Privilégie les vidéos populaires du pays et du genre sélectionnés.",
+    it: "Dà priorità ai video popolari nel paese e nel genere selezionati.",
+    hi: "चुने गए देश और शैली के लोकप्रिय वीडियो को प्राथमिकता देता है।",
+    "pt-BR": "Prioriza vídeos populares no país e gênero selecionados.",
+    de: "Bevorzugt beliebte Videos im ausgewählten Land und Genre.",
+    es: "Prioriza vídeos populares del país y género seleccionados.",
+    th: "ให้ความสำคัญกับวิดีโอยอดนิยมในประเทศและหมวดหมู่ที่เลือก",
+    id: "Mengutamakan video populer di negara dan genre yang dipilih.",
+    vi: "Ưu tiên video phổ biến trong quốc gia và thể loại đã chọn.",
+  },
+  chooseModeDesc: {
+    ja: "人気動画の通常モードか、低再生数優先の発掘モードを選びます。",
+    en: "Choose popular videos or Discovery mode for videos with fewer views.",
+    ko: "인기 영상 모드 또는 조회수가 적은 영상의 발견 모드를 선택합니다.",
+    fr: "Choisissez les vidéos populaires ou le mode Découverte pour les vidéos peu vues.",
+    it: "Scegli i video popolari o la modalità Scoperta per i video con meno visualizzazioni.",
+    hi: "लोकप्रिय वीडियो या कम व्यू वाले वीडियो के लिए खोज मोड चुनें।",
+    "pt-BR": "Escolha vídeos populares ou o modo descoberta para vídeos com menos visualizações.",
+    de: "Wähle beliebte Videos oder den Entdeckungsmodus für Videos mit wenigen Aufrufen.",
+    es: "Elige vídeos populares o el modo descubrimiento para vídeos con menos visualizaciones.",
+    th: "เลือกวิดีโอยอดนิยมหรือโหมดค้นพบสำหรับวิดีโอที่มียอดชมน้อย",
+    id: "Pilih video populer atau mode penemuan untuk video dengan sedikit penayangan.",
+    vi: "Chọn video phổ biến hoặc chế độ khám phá cho video có ít lượt xem.",
+  },
+};
+
 const allGenreNames = {
   ja: "すべてのジャンル", en: "All genres", ko: "모든 장르", fr: "Tous les genres",
   it: "Tutti i generi", hi: "सभी शैलियाँ", "pt-BR": "Todos os gêneros", de: "Alle Genres",
@@ -104,9 +150,11 @@ export function localeForCountry(countryId) {
 export function createTranslator(locale = "ja") {
   const activeLocale = ui[locale] ? locale : "en";
   return (key, params = {}) => {
-    let value = key === "discoveryDescription"
-      ? discoveryDescriptions[activeLocale]
-      : ui[activeLocale][key] ?? ui.en[key] ?? ui.ja[key] ?? key;
+    let value = modeDescriptions[key]?.[activeLocale]
+      ?? ui[activeLocale][key]
+      ?? ui.en[key]
+      ?? ui.ja[key]
+      ?? key;
     for (const [name, replacement] of Object.entries(params)) {
       value = value.replaceAll(`{${name}}`, String(replacement));
     }
@@ -138,6 +186,9 @@ export function validateTranslations() {
     }
     if ((genreNames[locale] ?? []).length !== genreIds.length) {
       errors.push(`${locale}: genre names`);
+    }
+    for (const [key, descriptions] of Object.entries(modeDescriptions)) {
+      if (!descriptions[locale]) errors.push(`${locale}: ${key}`);
     }
   }
   for (const locale of new Set(Object.values(COUNTRY_LOCALES))) {
