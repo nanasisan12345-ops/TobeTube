@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 
 import {
   buildSearchQuery,
-  findMissingPairs,
-  selectCandidate,
+  findPairsBelowTarget,
+  selectCandidates,
   toCatalogVideo,
 } from "./youtube-data-utils.mjs";
 
@@ -17,6 +17,13 @@ const requestedLimit = Number.parseInt(limitArgument?.split("=")[1] ?? "90", 10)
 if (!Number.isInteger(requestedLimit) || requestedLimit < 1 || requestedLimit > 95) {
   throw new Error("--limit は1から95の整数で指定してください。");
 }
+const targetCountArgument = process.argv.find((argument) => argument.startsWith("--target-count="));
+const targetCount = Number.parseInt(targetCountArgument?.split("=")[1] ?? "50", 10);
+if (!Number.isInteger(targetCount) || targetCount < 1 || targetCount > 50) {
+  throw new Error("--target-count は1から50の整数で指定してください。");
+}
+const countryFilter = process.argv.find((argument) => argument.startsWith("--country="))?.split("=")[1];
+const genreFilter = process.argv.find((argument) => argument.startsWith("--genre="))?.split("=")[1];
 
 const [countries, genres, videos, searchConfig] = await Promise.all([
   readJson("countries.json"),
@@ -24,13 +31,24 @@ const [countries, genres, videos, searchConfig] = await Promise.all([
   readJson("videos.json"),
   readJson("youtube-search.json"),
 ]);
-const missingPairs = findMissingPairs(countries, genres, videos);
-const targetPairs = missingPairs.slice(0, requestedLimit);
+if (countryFilter && !countries.some(({ id }) => id === countryFilter)) {
+  throw new Error(`登録されていない国です: ${countryFilter}`);
+}
+if (genreFilter && !genres.some(({ id }) => id === genreFilter)) {
+  throw new Error(`登録されていないジャンルです: ${genreFilter}`);
+}
 
-console.log(`全 ${countries.length * genres.length} 組のうち ${missingPairs.length} 組が未登録です。今回の対象は ${targetPairs.length} 組です。`);
+const underfilledPairs = findPairsBelowTarget(countries, genres, videos, targetCount);
+const eligiblePairs = underfilledPairs.filter(({ country, genre }) => (
+  (!countryFilter || country.id === countryFilter)
+  && (!genreFilter || genre.id === genreFilter)
+));
+const targetPairs = eligiblePairs.slice(0, requestedLimit);
+
+console.log(`全 ${countries.length * genres.length} 組のうち ${underfilledPairs.length} 組が目標の${targetCount}本未満です。今回の対象は ${targetPairs.length} 組です。`);
 if (isDryRun) {
   for (const pair of targetPairs.slice(0, 10)) {
-    console.log(`- ${pair.country.id}/${pair.genre.id}: ${buildSearchQuery(pair, searchConfig)}`);
+    console.log(`- ${pair.country.id}/${pair.genre.id} (${pair.count}→最大${targetCount}本): ${buildSearchQuery(pair, searchConfig)}`);
   }
   console.log("dry-runのためYouTube APIとvideos.jsonは変更していません。");
   process.exit(0);
@@ -64,13 +82,20 @@ for (let index = 0; index < detailIds.length; index += 50) {
 const usedIds = new Set(videos.map((video) => video.id));
 const additions = [];
 for (const search of searches) {
-  const candidate = selectCandidate(search.items, detailsById, usedIds);
-  if (!candidate) {
+  const candidates = selectCandidates(
+    search.items,
+    detailsById,
+    usedIds,
+    targetCount - search.pair.count,
+  );
+  if (candidates.length === 0) {
     console.warn(`${search.pair.country.id}/${search.pair.genre.id}: 条件に合う埋め込み可能な公開動画が見つかりませんでした。`);
     continue;
   }
-  usedIds.add(candidate.id);
-  additions.push(toCatalogVideo(candidate, search.pair, searchConfig));
+  for (const candidate of candidates) {
+    usedIds.add(candidate.id);
+    additions.push(toCatalogVideo(candidate, search.pair, searchConfig));
+  }
 }
 
 let refreshedCount = 0;
@@ -88,9 +113,11 @@ if (additions.length === 0 && refreshedCount === 0) {
 
 const videosPath = join(dataPath, "videos.json");
 const temporaryPath = `${videosPath}.tmp`;
-await writeFile(temporaryPath, `${JSON.stringify([...refreshedVideos, ...additions], null, 2)}\n`, "utf8");
+const updatedVideos = [...refreshedVideos, ...additions];
+await writeFile(temporaryPath, `${JSON.stringify(updatedVideos, null, 2)}\n`, "utf8");
 await rename(temporaryPath, videosPath);
-console.log(`${additions.length} 本を追加し、${refreshedCount} 本の再生数を更新しました。残りは ${missingPairs.length - additions.length} 組です。`);
+const remainingPairs = findPairsBelowTarget(countries, genres, updatedVideos, targetCount).length;
+console.log(`${additions.length} 本を追加し、${refreshedCount} 本の再生数を更新しました。目標未満は残り${remainingPairs}組です。`);
 
 async function readJson(name) {
   return JSON.parse(await readFile(join(dataPath, name), "utf8"));
@@ -108,7 +135,7 @@ async function searchVideos(pair) {
     videoEmbeddable: "true",
     videoSyndicated: "true",
     order: "relevance",
-    maxResults: "5",
+    maxResults: "50",
   });
   return result.items ?? [];
 }

@@ -2,6 +2,21 @@ name: Update YouTube catalog
 
 on:
   workflow_dispatch:
+    inputs:
+      limit:
+        description: Number of country and genre searches
+        required: true
+        default: "90"
+      target_count:
+        description: Target videos per country and genre
+        required: true
+        default: "50"
+      country:
+        description: Optional country id such as jp
+        required: false
+      genre:
+        description: Optional genre id such as game
+        required: false
   schedule:
     - cron: "17 2 * * *"
 
@@ -32,9 +47,18 @@ jobs:
         with:
           node-version: 24
 
-      - name: Add videos for missing country and genre pairs
+      - name: Expand country and genre video pools
         if: env.YOUTUBE_API_KEY != ''
-        run: npm run sync:youtube -- --limit=90
+        env:
+          SYNC_LIMIT: ${{ inputs.limit || '90' }}
+          SYNC_TARGET_COUNT: ${{ inputs.target_count || '50' }}
+          SYNC_COUNTRY: ${{ inputs.country }}
+          SYNC_GENRE: ${{ inputs.genre }}
+        run: |
+          args=("--limit=$SYNC_LIMIT" "--target-count=$SYNC_TARGET_COUNT")
+          if [ -n "$SYNC_COUNTRY" ]; then args+=("--country=$SYNC_COUNTRY"); fi
+          if [ -n "$SYNC_GENRE" ]; then args+=("--genre=$SYNC_GENRE"); fi
+          npm run sync:youtube -- "${args[@]}"
 
       - name: Verify catalog and site
         if: env.YOUTUBE_API_KEY != ''

@@ -1,15 +1,29 @@
 import { genreName } from "../js/i18n.js";
 
 export function findMissingPairs(countries, genres, videos) {
-  const covered = new Set();
+  return findPairsBelowTarget(countries, genres, videos, 1)
+    .map(({ country, genre }) => ({ country, genre }));
+}
+
+export function findPairsBelowTarget(countries, genres, videos, targetCount) {
+  if (!Number.isInteger(targetCount) || targetCount < 1) {
+    throw new Error("targetCount は1以上の整数で指定してください。");
+  }
+  const counts = new Map();
   for (const video of videos) {
     for (const countryId of video.countries ?? []) {
-      covered.add(`${countryId}:${video.genre}`);
+      const key = `${countryId}:${video.genre}`;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
     }
   }
   return countries.flatMap((country) => genres
-    .filter((genre) => !covered.has(`${country.id}:${genre.id}`))
-    .map((genre) => ({ country, genre })));
+    .map((genre) => ({
+      country,
+      genre,
+      count: counts.get(`${country.id}:${genre.id}`) ?? 0,
+    })))
+    .filter(({ count }) => count < targetCount)
+    .sort((left, right) => left.count - right.count);
 }
 
 export function buildSearchQuery(pair, searchConfig) {
@@ -47,15 +61,23 @@ export function durationBucket(isoDuration) {
 }
 
 export function selectCandidate(searchItems, detailsById, usedIds) {
+  return selectCandidates(searchItems, detailsById, usedIds, 1)[0] ?? null;
+}
+
+export function selectCandidates(searchItems, detailsById, usedIds, limit = Number.POSITIVE_INFINITY) {
+  const selected = [];
+  const seenIds = new Set(usedIds);
   for (const item of searchItems) {
     const videoId = item?.id?.videoId;
     const details = detailsById.get(videoId);
-    if (!videoId || usedIds.has(videoId) || !details) continue;
+    if (!videoId || seenIds.has(videoId) || !details) continue;
     if (details.status?.privacyStatus !== "public" || details.status?.embeddable !== true) continue;
     if (details.contentDetails?.duration === "P0D") continue;
-    return details;
+    selected.push(details);
+    seenIds.add(videoId);
+    if (selected.length >= limit) break;
   }
-  return null;
+  return selected;
 }
 
 export function toCatalogVideo(details, pair, searchConfig) {
