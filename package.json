@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
+    "sync:youtube": "node scripts/sync-youtube-data.mjs",
+    "coverage": "node scripts/validate-coverage.mjs",
+    "validate:coverage": "node scripts/validate-coverage.mjs --require-full",
     "validate:data": "node scripts/validate-data.mjs",
     "validate:site": "node scripts/validate-site.mjs",
     "validate:youtube": "node --use-system-ca scripts/validate-youtube.mjs"

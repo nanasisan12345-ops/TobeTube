@@ -1,6 +1,7 @@
 import { loadCatalog } from "./data-store.js";
+import { countryName, createTranslator, genreName, localeForCountry } from "./i18n.js";
 import { YouTubePlayerController } from "./player.js";
-import { pickDiscoveryVideo, pickRandomVideo, pushRecentId } from "./randomizer.js";
+import { getEligibleVideos, pickDiscoveryVideo, pickRandomVideo, pushRecentId } from "./randomizer.js";
 import { createStorage } from "./storage.js";
 
 const iconPaths = {
@@ -18,9 +19,19 @@ const iconPaths = {
   hammer: '<path d="m14 5 5 5M12.5 6.5l3-3 5 5-3 3M13 11 5 19l-2 2M9 15l3 3"/>',
   palette: '<path d="M12 3a9 9 0 1 0 0 18h1.5a2 2 0 0 0 0-4H12a2 2 0 0 1 0-4h5a4 4 0 0 0 4-4c0-3.3-4-6-9-6Z"/><circle cx="7.5" cy="9" r="1"/><circle cx="10" cy="6.5" r="1"/><circle cx="15" cy="7" r="1"/>',
   vehicle: '<path d="M5 17h14l-1-6-2-3H8l-2 3-1 6ZM7 17v2M17 17v2M7 13h10M8 8l-1-3M16 8l1-3"/><circle cx="8" cy="16" r="1"/><circle cx="16" cy="16" r="1"/>',
+  film: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4"/>',
+  horror: '<path d="M5 11a7 7 0 0 1 14 0v9l-3-2-2 2-2-2-2 2-2-2-3 2v-9Z"/><circle cx="9" cy="11" r="1"/><circle cx="15" cy="11" r="1"/><path d="M10 15h4"/>',
+  comedy: '<circle cx="12" cy="12" r="9"/><path d="M8 10h.01M16 10h.01M8.5 14c1 2 2.1 3 3.5 3s2.5-1 3.5-3"/>',
+  documentary: '<path d="M4 5h16v14H4z"/><path d="m10 9 5 3-5 3V9ZM7 2v3M17 2v3"/>',
+  animation: '<path d="M12 3 4 7v10l8 4 8-4V7l-8-4Z"/><path d="m4 7 8 4 8-4M12 11v10"/>',
+  dance: '<circle cx="14" cy="5" r="2"/><path d="m12 9 3 3 4 1M12 9l-3 4-4 1M15 12l-1 4 3 4M9 13l1 4-3 3"/>',
+  sound: '<path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/>',
+  camera: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="m8 6 1.5-2h5L16 6"/><circle cx="12" cy="12.5" r="3.5"/>',
 };
 
 const elements = {
+  countryGrid: document.querySelector("#country-grid"),
+  contentStep: document.querySelector("#content-step"),
   genreGrid: document.querySelector("#genre-grid"),
   launchButton: document.querySelector("#launch-button"),
   launchLabel: document.querySelector("#launch-label"),
@@ -54,15 +65,23 @@ const elements = {
 
 const storage = createStorage();
 const savedState = storage.read();
+const initialUrl = new URL(window.location.href);
+const requestedCountry = initialUrl.searchParams.get("country");
+const requestedGenre = initialUrl.searchParams.get("genre");
+const requestedMode = initialUrl.searchParams.get("mode");
 const state = {
+  countries: [],
   genres: [],
   videos: [],
-  selectedGenre: savedState.selectedGenre,
-  mode: savedState.mode,
+  selectedCountry: requestedCountry ?? savedState.selectedCountry,
+  selectedGenre: requestedGenre ?? (requestedCountry ? null : savedState.selectedGenre),
+  mode: requestedMode === "discovery" ? "discovery" : requestedCountry ? "genre" : savedState.mode,
   currentVideo: null,
   saved: savedState,
   errorTimer: null,
   errorStreak: 0,
+  locale: "ja",
+  t: createTranslator("ja"),
 };
 
 const player = new YouTubePlayerController("youtube-player", {
@@ -80,18 +99,41 @@ async function init() {
   applyTheme(state.saved.theme);
   try {
     const catalog = await loadCatalog();
+    state.countries = catalog.countries;
     state.genres = catalog.genres;
     state.videos = catalog.videos;
-    if (!state.genres.some((genre) => genre.id === state.selectedGenre)) {
+    if (!state.countries.some((country) => country.id === state.selectedCountry)) {
+      state.selectedCountry = null;
+      state.selectedGenre = null;
+      state.mode = "genre";
+      state.saved.selectedCountry = null;
+      state.saved.selectedGenre = null;
+      state.saved.mode = "genre";
+      storage.write(state.saved);
+    }
+    if (state.selectedGenre !== "all" && !state.genres.some((genre) => genre.id === state.selectedGenre)) {
       state.selectedGenre = null;
     }
+    if (state.mode === "discovery" && !state.selectedGenre) {
+      state.selectedGenre = "all";
+      state.saved.selectedGenre = "all";
+      storage.write(state.saved);
+    }
+    applyLocale();
+    renderCountries();
     renderGenres();
     updateModeSelection();
     updateLaunchButton();
     updateCollectionCounts();
-    const sharedVideoId = new URL(window.location.href).searchParams.get("v");
+    const sharedVideoId = initialUrl.searchParams.get("v");
     const sharedVideo = state.videos.find((video) => video.id === sharedVideoId);
     if (sharedVideo) {
+      const sharedCountry = sharedVideo.countries?.includes(requestedCountry)
+        ? requestedCountry
+        : sharedVideo.countries?.[0];
+      if (sharedCountry) {
+        selectCountry(sharedCountry, false);
+      }
       selectGenre(sharedVideo.genre);
       await playVideo(sharedVideo);
     }
@@ -118,6 +160,10 @@ function bindEvents() {
   });
   document.addEventListener("keydown", handleKeyboardShortcut);
   elements.surpriseButton.addEventListener("click", () => {
+    if (!state.selectedCountry) {
+      showToast(state.t("selectCountry"));
+      return;
+    }
     setMode("genre");
     state.selectedGenre = "all";
     updateGenreSelection();
@@ -128,9 +174,98 @@ function bindEvents() {
   elements.discoveryModeButton.addEventListener("click", () => setMode("discovery"));
 }
 
+function applyLocale() {
+  state.locale = localeForCountry(state.selectedCountry);
+  state.t = createTranslator(state.locale);
+  document.documentElement.lang = state.locale;
+  document.title = state.t("title");
+  document.querySelector('meta[name="description"]')?.setAttribute("content", state.t("description"));
+  document.querySelector('meta[property="og:title"]')?.setAttribute("content", state.t("title"));
+  document.querySelector('meta[property="og:description"]')?.setAttribute("content", state.t("description"));
+  document.querySelector('meta[name="twitter:title"]')?.setAttribute("content", state.t("title"));
+  document.querySelector('meta[name="twitter:description"]')?.setAttribute("content", state.t("description"));
+
+  for (const element of document.querySelectorAll("[data-i18n]")) {
+    element.textContent = state.t(element.dataset.i18n);
+  }
+  for (const element of document.querySelectorAll("[data-i18n-aria-label]")) {
+    element.setAttribute("aria-label", state.t(element.dataset.i18nAriaLabel));
+  }
+  for (const button of elements.countryGrid.querySelectorAll(".country-button")) {
+    const country = state.countries.find((item) => item.id === button.dataset.countryId);
+    if (country) button.querySelector(".country-name").textContent = countryName(country.code, state.locale, country.name);
+  }
+  for (const button of elements.genreGrid.querySelectorAll(".genre-button")) {
+    const genre = state.genres.find((item) => item.id === button.dataset.genreId);
+    if (genre || button.dataset.genreId === "all") {
+      button.querySelector("strong").textContent = genreName(button.dataset.genreId, state.locale, genre?.name);
+    }
+  }
+  applyTheme(state.saved.theme);
+  if (state.currentVideo) renderCurrentVideo(state.currentVideo);
+  if (elements.collectionDialog.open) renderCollection();
+}
+
+function updateCountryUrl(resetChoice) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("country", state.selectedCountry);
+  if (resetChoice) {
+    url.searchParams.delete("v");
+    url.searchParams.delete("genre");
+    url.searchParams.delete("mode");
+  }
+  window.history.replaceState({}, "", url);
+}
+
+function updateChoiceUrl() {
+  const url = new URL(window.location.href);
+  url.searchParams.delete("v");
+  if (state.mode === "discovery") {
+    url.searchParams.set("mode", "discovery");
+    if (state.selectedGenre && state.selectedGenre !== "all") {
+      url.searchParams.set("genre", state.selectedGenre);
+    } else {
+      url.searchParams.delete("genre");
+    }
+  } else {
+    url.searchParams.delete("mode");
+    if (state.selectedGenre && state.selectedGenre !== "all") {
+      url.searchParams.set("genre", state.selectedGenre);
+    } else {
+      url.searchParams.delete("genre");
+    }
+  }
+  window.history.replaceState({}, "", url);
+}
+
+function renderCountries() {
+  elements.countryGrid.replaceChildren();
+  for (const country of state.countries) {
+    const button = document.createElement("button");
+    button.className = "country-button";
+    button.type = "button";
+    button.dataset.countryId = country.id;
+    button.setAttribute("aria-pressed", String(state.selectedCountry === country.id));
+
+    const code = document.createElement("span");
+    code.className = "country-code";
+    code.textContent = country.code;
+    const name = document.createElement("span");
+    name.className = "country-name";
+    name.textContent = countryName(country.code, state.locale, country.name);
+    button.append(code, name);
+    button.addEventListener("click", () => selectCountry(country.id));
+    elements.countryGrid.append(button);
+  }
+}
+
 function renderGenres() {
   elements.genreGrid.replaceChildren();
-  for (const genre of state.genres) {
+  const displayedGenres = [
+    { id: "all", name: "すべてのジャンル", description: "全ジャンルから選ぶ", color: "#ff5c58", icon: "compass" },
+    ...state.genres,
+  ];
+  for (const genre of displayedGenres) {
     const button = document.createElement("button");
     button.className = "genre-button";
     button.type = "button";
@@ -145,70 +280,150 @@ function renderGenres() {
 
     const copy = document.createElement("span");
     const name = document.createElement("strong");
-    name.textContent = genre.name;
+    name.textContent = genreName(genre.id, state.locale, genre.name);
     const description = document.createElement("small");
     description.textContent = genre.description;
+    description.dataset.baseDescription = genre.description;
     copy.append(name, description);
     button.append(symbol, copy);
     button.addEventListener("click", () => selectGenre(genre.id));
     elements.genreGrid.append(button);
   }
+  updateGenreAvailability();
+}
+
+function selectCountry(countryId, resetChoice = true) {
+  if (!state.countries.some((country) => country.id === countryId)) {
+    return;
+  }
+
+  state.selectedCountry = countryId;
+  state.saved.selectedCountry = countryId;
+  if (resetChoice) {
+    state.mode = "genre";
+    state.selectedGenre = null;
+    state.saved.mode = "genre";
+    state.saved.selectedGenre = null;
+  }
+  storage.write(state.saved);
+  updateCountryUrl(resetChoice);
+  applyLocale();
+  updateCountrySelection();
+  updateModeSelection();
+  updateLaunchButton();
 }
 
 function selectGenre(genreId) {
-  state.mode = "genre";
+  if (!state.selectedCountry) {
+    return;
+  }
   state.selectedGenre = genreId;
   state.saved.selectedGenre = genreId;
-  state.saved.mode = "genre";
+  state.saved.mode = state.mode;
   storage.write(state.saved);
+  updateChoiceUrl();
   updateModeSelection();
   updateGenreSelection();
   updateLaunchButton();
 }
 
 function setMode(mode) {
+  if (!state.selectedCountry) {
+    return;
+  }
   state.mode = mode === "discovery" ? "discovery" : "genre";
+  if (state.mode === "discovery" && !state.selectedGenre) {
+    state.selectedGenre = "all";
+    state.saved.selectedGenre = "all";
+  }
   state.saved.mode = state.mode;
   storage.write(state.saved);
+  updateChoiceUrl();
   updateModeSelection();
   updateGenreSelection();
   updateLaunchButton();
 }
 
 function updateModeSelection() {
-  const isDiscovery = state.mode === "discovery";
+  const hasCountry = Boolean(state.selectedCountry);
+  const isDiscovery = hasCountry && state.mode === "discovery";
   elements.standardModeButton.setAttribute("aria-pressed", String(!isDiscovery));
   elements.discoveryModeButton.setAttribute("aria-pressed", String(isDiscovery));
-  elements.genreGrid.dataset.inactive = String(isDiscovery);
-  elements.modeDescription.textContent = isDiscovery
-    ? "全ジャンルから、まだ見ていない動画と直前とは違うジャンルを優先します。"
-    : "気分に合うジャンルをひとつ選びます。";
+  elements.standardModeButton.disabled = !hasCountry;
+  elements.discoveryModeButton.disabled = !hasCountry;
+  elements.surpriseButton.disabled = !hasCountry;
+  elements.contentStep.dataset.disabled = String(!hasCountry);
+  elements.contentStep.inert = !hasCountry;
+  elements.genreGrid.dataset.inactive = "false";
+  elements.modeDescription.textContent = !hasCountry
+    ? state.t("selectCountry")
+    : isDiscovery
+      ? state.t("discoveryDescription")
+      : state.t("genreDescription");
+  updateGenreAvailability();
   updateGenreSelection();
+}
+
+function updateCountrySelection() {
+  for (const button of elements.countryGrid.querySelectorAll(".country-button")) {
+    button.setAttribute("aria-pressed", String(button.dataset.countryId === state.selectedCountry));
+  }
+}
+
+function updateGenreAvailability() {
+  const buttons = [...elements.genreGrid.querySelectorAll(".genre-button")];
+  for (const button of buttons) {
+    const count = state.selectedCountry
+      ? getEligibleVideos(state.videos, button.dataset.genreId, state.selectedCountry).length
+      : 0;
+    button.disabled = !state.selectedCountry || count === 0;
+    const description = button.querySelector("small");
+    if (description) {
+      description.textContent = state.selectedCountry
+        ? count > 0
+          ? state.t("videoCount", { count })
+          : state.t("unavailable")
+        : description.dataset.baseDescription;
+    }
+  }
+
+  if (state.selectedCountry) {
+    buttons.sort((left, right) => Number(left.disabled) - Number(right.disabled));
+    elements.genreGrid.append(...buttons);
+  }
 }
 
 function updateGenreSelection() {
   for (const button of elements.genreGrid.querySelectorAll(".genre-button")) {
-    button.setAttribute("aria-pressed", String(state.mode === "genre" && button.dataset.genreId === state.selectedGenre));
+    button.setAttribute("aria-pressed", String(button.dataset.genreId === state.selectedGenre));
   }
 }
 
 function updateLaunchButton() {
   const genre = state.genres.find((item) => item.id === state.selectedGenre);
-  if (state.mode === "discovery") {
-    elements.launchButton.disabled = state.videos.length === 0;
-    elements.launchLabel.textContent = "未知の動画を発掘する";
+  if (!state.selectedCountry) {
+    elements.launchButton.disabled = true;
+    elements.launchLabel.textContent = state.t("selectCountryButton");
     return;
   }
-  elements.launchButton.disabled = !state.selectedGenre;
+  if (state.mode === "discovery") {
+    elements.launchButton.disabled = getEligibleVideos(state.videos, state.selectedGenre ?? "all", state.selectedCountry).length === 0;
+    elements.launchLabel.textContent = state.t("launchDiscovery");
+    return;
+  }
+  const candidateCount = state.selectedGenre
+    ? getEligibleVideos(state.videos, state.selectedGenre, state.selectedCountry).length
+    : 0;
+  elements.launchButton.disabled = !state.selectedGenre || candidateCount === 0;
   elements.launchLabel.textContent = state.selectedGenre === "all"
-    ? "完全おまかせで飛ぶ"
+    ? state.t("launchSurprise")
     : genre
-      ? `${genre.name}の動画へ飛ぶ`
-      : "ジャンルを選んでください";
+      ? state.t("launchGenre", { genre: genreName(genre.id, state.locale, genre.name) })
+      : state.t("chooseGenre");
 }
 
 async function playNext() {
-  if ((state.mode === "genre" && !state.selectedGenre) || state.videos.length === 0) {
+  if (!state.selectedCountry || (state.mode === "genre" && !state.selectedGenre) || state.videos.length === 0) {
     return;
   }
 
@@ -217,17 +432,20 @@ async function playNext() {
   elements.playerError.hidden = true;
   const video = state.mode === "discovery"
     ? pickDiscoveryVideo(state.videos, {
+      genreId: state.selectedGenre ?? "all",
+      countryId: state.selectedCountry,
       historyIds: state.saved.history,
       recentIds: state.saved.recentIds,
       currentGenre: state.currentVideo?.genre ?? null,
     })
     : pickRandomVideo(state.videos, {
       genreId: state.selectedGenre,
+      countryId: state.selectedCountry,
       recentIds: state.saved.recentIds,
     });
 
   if (!video) {
-    showToast("このジャンルには再生できる動画がありません。");
+    showToast(state.t("noVideos"));
     return;
   }
 
@@ -238,6 +456,7 @@ async function playVideo(video) {
   state.currentVideo = video;
   state.saved.recentIds = pushRecentId(state.saved.recentIds, video.id);
   state.saved.history = pushRecentId(state.saved.history, video.id, 200);
+  state.saved.selectedCountry = state.selectedCountry;
   state.saved.selectedGenre = state.selectedGenre;
   state.saved.mode = state.mode;
   storage.write(state.saved);
@@ -260,7 +479,11 @@ async function playVideo(video) {
 
 function renderCurrentVideo(video) {
   const genre = state.genres.find((item) => item.id === video.genre);
-  elements.videoGenre.textContent = genre?.name ?? "おまかせ";
+  const country = state.countries.find((item) => item.id === state.selectedCountry);
+  elements.videoGenre.textContent = [
+    country ? countryName(country.code, state.locale, country.name) : null,
+    genre ? genreName(genre.id, state.locale, genre.name) : state.t("genreFallback"),
+  ].filter(Boolean).join(" / ");
   elements.playerHeading.textContent = video.title;
   elements.videoChannel.textContent = video.channel;
   elements.tagList.replaceChildren();
@@ -271,7 +494,7 @@ function renderCurrentVideo(video) {
   }
   const isFavorite = state.saved.favorites.includes(video.id);
   elements.favoriteButton.setAttribute("aria-pressed", String(isFavorite));
-  elements.favoriteButton.setAttribute("aria-label", isFavorite ? "お気に入りから外す" : "お気に入りに追加");
+  elements.favoriteButton.setAttribute("aria-label", isFavorite ? state.t("removeFavoriteAria") : state.t("addFavoriteAria"));
 }
 
 function toggleFavorite() {
@@ -287,7 +510,7 @@ function toggleFavorite() {
   storage.write(state.saved);
   renderCurrentVideo(state.currentVideo);
   updateCollectionCounts();
-  showToast(isFavorite ? "お気に入りから外しました。" : "お気に入りに追加しました。");
+  showToast(isFavorite ? state.t("removedFavorite") : state.t("addedFavorite"));
 }
 
 async function shareCurrentVideo() {
@@ -297,7 +520,7 @@ async function shareCurrentVideo() {
 
   const shareData = {
     title: `${state.currentVideo.title} | TobeTube`,
-    text: "TobeTubeで見つけた動画です。",
+    text: state.t("shareText"),
     url: window.location.href,
   };
 
@@ -314,15 +537,18 @@ async function shareCurrentVideo() {
 
   try {
     await navigator.clipboard.writeText(shareData.url);
-    showToast("動画のURLをコピーしました。");
+    showToast(state.t("copied"));
   } catch {
-    showToast("URLをコピーできませんでした。アドレスバーからコピーしてください。");
+    showToast(state.t("copyFailed"));
   }
 }
 
 function updateShareUrl(video) {
   const url = new URL(window.location.href);
   url.searchParams.set("v", video.id);
+  if (state.selectedCountry) {
+    url.searchParams.set("country", state.selectedCountry);
+  }
   url.searchParams.set("genre", video.genre);
   window.history.replaceState({}, "", url);
 }
@@ -342,8 +568,8 @@ function selectCollectionTab(tabName) {
 }
 
 function renderCollection() {
-  renderVideoList(elements.favoritesPanel, state.saved.favorites, "お気に入りはまだありません。", true);
-  renderVideoList(elements.historyPanel, state.saved.history, "最近見た動画はまだありません。", false);
+  renderVideoList(elements.favoritesPanel, state.saved.favorites, state.t("emptyFavorites"), true);
+  renderVideoList(elements.historyPanel, state.saved.history, state.t("emptyHistory"), false);
   updateCollectionCounts();
 }
 
@@ -388,7 +614,7 @@ function renderVideoList(panel, videoIds, emptyMessage, removable) {
       const removeButton = document.createElement("button");
       removeButton.className = "collection-remove";
       removeButton.type = "button";
-      removeButton.setAttribute("aria-label", `${video.title}をお気に入りから外す`);
+      removeButton.setAttribute("aria-label", state.t("removeFavorite", { title: video.title }));
       removeButton.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg>';
       removeButton.addEventListener("click", () => {
         state.saved.favorites = state.saved.favorites.filter((id) => id !== video.id);
@@ -411,6 +637,12 @@ function renderVideoList(panel, videoIds, emptyMessage, removable) {
 
 async function playCollectionVideo(video) {
   elements.collectionDialog.close();
+  const countryId = video.countries?.includes(state.selectedCountry)
+    ? state.selectedCountry
+    : video.countries?.[0];
+  if (countryId) {
+    selectCountry(countryId, false);
+  }
   selectGenre(video.genre);
   await playVideo(video);
 }
@@ -426,14 +658,14 @@ function toggleTheme() {
   state.saved.theme = nextTheme;
   storage.write(state.saved);
   applyTheme(nextTheme);
-  showToast(nextTheme === "dark" ? "ダークテーマに切り替えました。" : "ライトテーマに切り替えました。");
+  showToast(nextTheme === "dark" ? state.t("darkEnabled") : state.t("lightEnabled"));
 }
 
 function applyTheme(theme) {
   const systemDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? true;
   const effectiveTheme = theme === "system" ? (systemDark ? "dark" : "light") : theme;
   document.documentElement.dataset.theme = effectiveTheme;
-  elements.themeButton.setAttribute("aria-label", effectiveTheme === "dark" ? "ライトテーマに切り替える" : "ダークテーマに切り替える");
+  elements.themeButton.setAttribute("aria-label", effectiveTheme === "dark" ? state.t("themeLight") : state.t("themeDark"));
 }
 
 function handleKeyboardShortcut(event) {
@@ -476,11 +708,12 @@ function handlePlayerError() {
 }
 
 function renderCatalogError(error) {
+  elements.countryGrid.replaceChildren();
   elements.genreGrid.replaceChildren();
   const message = document.createElement("p");
   message.className = "collection-empty";
-  message.textContent = "動画データを読み込めませんでした。ページを再読み込みしてください。";
-  elements.genreGrid.append(message);
+  message.textContent = state.t("dataError");
+  elements.countryGrid.append(message);
   elements.launchButton.disabled = true;
   elements.surpriseButton.disabled = true;
   elements.standardModeButton.disabled = true;

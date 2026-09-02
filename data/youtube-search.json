@@ -1,0 +1,28 @@
+{
+  "countries": {
+    "jp": { "regionCode": "JP", "language": "ja", "queryName": "日本" },
+    "kr": { "regionCode": "KR", "language": "ko", "queryName": "대한민국" },
+    "us": { "regionCode": "US", "language": "en", "queryName": "United States" },
+    "gb": { "regionCode": "GB", "language": "en", "queryName": "United Kingdom" },
+    "fr": { "regionCode": "FR", "language": "fr", "queryName": "France" },
+    "it": { "regionCode": "IT", "language": "it", "queryName": "Italia" },
+    "in": { "regionCode": "IN", "language": "hi", "queryName": "भारत" },
+    "br": { "regionCode": "BR", "language": "pt-BR", "queryName": "Brasil" },
+    "ca": { "regionCode": "CA", "language": "en", "queryName": "Canada" },
+    "au": { "regionCode": "AU", "language": "en", "queryName": "Australia" },
+    "de": { "regionCode": "DE", "language": "de", "queryName": "Deutschland" },
+    "es": { "regionCode": "ES", "language": "es", "queryName": "España" },
+    "mx": { "regionCode": "MX", "language": "es", "queryName": "México" },
+    "th": { "regionCode": "TH", "language": "th", "queryName": "ประเทศไทย" },
+    "id": { "regionCode": "ID", "language": "id", "queryName": "Indonesia" },
+    "vn": { "regionCode": "VN", "language": "vi", "queryName": "Việt Nam" }
+  },
+  "querySuffixes": {
+    "movie": "full movie official",
+    "livecam": "live webcam",
+    "documentary": "documentary full",
+    "music": "official music",
+    "relax": "relaxing",
+    "asmr": "ASMR"
+  }
+}

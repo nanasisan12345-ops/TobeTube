@@ -3,19 +3,24 @@ import assert from "node:assert/strict";
 
 import {
   getEligibleVideos,
+  preferLowViewCount,
   pickDiscoveryVideo,
   pickRandomVideo,
   pushRecentId,
 } from "../js/randomizer.js";
 
 const videos = [
-  { id: "aaaaaaaaaaa", genre: "game" },
-  { id: "bbbbbbbbbbb", genre: "game" },
-  { id: "ccccccccccc", genre: "music" },
+  { id: "aaaaaaaaaaa", genre: "game", countries: ["jp"] },
+  { id: "bbbbbbbbbbb", genre: "game", countries: ["us"] },
+  { id: "ccccccccccc", genre: "music", countries: ["jp"] },
 ];
 
 test("指定ジャンルだけを抽選対象にする", () => {
   assert.deepEqual(getEligibleVideos(videos, "game"), videos.slice(0, 2));
+});
+
+test("指定国とジャンルの両方で抽選対象を絞る", () => {
+  assert.deepEqual(getEligibleVideos(videos, "game", "jp"), [videos[0]]);
 });
 
 test("直近の動画を候補から外す", () => {
@@ -59,6 +64,40 @@ test("発掘モードは可能なら直前と違うジャンルを選ぶ", () =>
     random: () => 0,
   });
   assert.equal(picked.genre, "music");
+});
+
+test("発掘モードも指定国の動画だけを返す", () => {
+  const picked = pickDiscoveryVideo(videos, {
+    countryId: "jp",
+    historyIds: [],
+    currentGenre: "game",
+    random: () => 0,
+  });
+  assert.equal(picked.id, "ccccccccccc");
+});
+
+test("発掘モードも選択したジャンルだけを返す", () => {
+  const picked = pickDiscoveryVideo(videos, {
+    countryId: "jp",
+    genreId: "game",
+    historyIds: [],
+    random: () => 0,
+  });
+  assert.equal(picked.id, "aaaaaaaaaaa");
+});
+
+test("発掘モードは再生数が少ない上位25パーセントを優先する", () => {
+  const pool = [
+    { id: "low", viewCount: 10 },
+    { id: "middle", viewCount: 100 },
+    { id: "high", viewCount: 1000 },
+    { id: "highest", viewCount: 10000 },
+  ];
+  assert.deepEqual(preferLowViewCount(pool), [pool[0]]);
+});
+
+test("再生数がない既存動画だけの場合は全候補を維持する", () => {
+  assert.deepEqual(preferLowViewCount(videos), videos);
 });
 
 test("全動画を視聴済みでも直近と違う動画を返す", () => {

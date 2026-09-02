@@ -1,20 +1,22 @@
 export const DEFAULT_RECENT_LIMIT = 8;
 
-export function getEligibleVideos(videos, genreId = "all") {
+export function getEligibleVideos(videos, genreId = "all", countryId = null) {
   if (!Array.isArray(videos)) {
     return [];
   }
 
-  return genreId === "all"
-    ? [...videos]
-    : videos.filter((video) => video.genre === genreId);
+  return videos.filter((video) => {
+    const matchesGenre = genreId === "all" || video.genre === genreId;
+    const matchesCountry = !countryId || video.countries?.includes(countryId);
+    return matchesGenre && matchesCountry;
+  });
 }
 
 export function pickRandomVideo(
   videos,
-  { genreId = "all", recentIds = [], random = Math.random } = {},
+  { genreId = "all", countryId = null, recentIds = [], random = Math.random } = {},
 ) {
-  const eligible = getEligibleVideos(videos, genreId);
+  const eligible = getEligibleVideos(videos, genreId, countryId);
   if (eligible.length === 0) {
     return null;
   }
@@ -31,28 +33,46 @@ export function pickRandomVideo(
 
 export function pickDiscoveryVideo(
   videos,
-  { historyIds = [], recentIds = [], currentGenre = null, random = Math.random } = {},
+  {
+    genreId = "all",
+    countryId = null,
+    historyIds = [],
+    recentIds = [],
+    currentGenre = null,
+    random = Math.random,
+  } = {},
 ) {
-  if (!Array.isArray(videos) || videos.length === 0) {
+  const eligible = getEligibleVideos(videos, genreId, countryId);
+  if (eligible.length === 0) {
     return null;
   }
 
   const historySet = new Set(historyIds);
-  const unseen = videos.filter((video) => !historySet.has(video.id));
+  const unseen = eligible.filter((video) => !historySet.has(video.id));
   if (unseen.length > 0) {
     const unseenDifferentGenre = currentGenre
       ? unseen.filter((video) => video.genre !== currentGenre)
       : unseen;
-    return pickFromPool(unseenDifferentGenre.length > 0 ? unseenDifferentGenre : unseen, random);
+    const discoveryPool = unseenDifferentGenre.length > 0 ? unseenDifferentGenre : unseen;
+    return pickFromPool(preferLowViewCount(discoveryPool), random);
   }
 
   const differentGenre = currentGenre
-    ? videos.filter((video) => video.genre !== currentGenre)
-    : videos;
-  return pickRandomVideo(differentGenre.length > 0 ? differentGenre : videos, {
+    ? eligible.filter((video) => video.genre !== currentGenre)
+    : eligible;
+  return pickRandomVideo(preferLowViewCount(differentGenre.length > 0 ? differentGenre : eligible), {
     recentIds,
     random,
   });
+}
+
+export function preferLowViewCount(videos, ratio = 0.25) {
+  const known = videos.filter((video) => Number.isFinite(video.viewCount) && video.viewCount >= 0);
+  if (known.length === 0) return videos;
+  const sorted = [...known].sort((left, right) => left.viewCount - right.viewCount);
+  const poolSize = Math.max(1, Math.ceil(sorted.length * ratio));
+  const threshold = sorted[poolSize - 1].viewCount;
+  return known.filter((video) => video.viewCount <= threshold);
 }
 
 function pickFromPool(pool, random) {

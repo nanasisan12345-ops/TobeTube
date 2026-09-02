@@ -1,0 +1,98 @@
+[
+  {
+    "id": "jp",
+    "code": "JP",
+    "name": "日本",
+    "description": "日本の文化・街・食・作品"
+  },
+  {
+    "id": "kr",
+    "code": "KR",
+    "name": "韓国",
+    "description": "韓国の文化・街・食・作品"
+  },
+  {
+    "id": "us",
+    "code": "US",
+    "name": "アメリカ",
+    "description": "アメリカの文化・街・作品"
+  },
+  {
+    "id": "gb",
+    "code": "GB",
+    "name": "イギリス",
+    "description": "イギリスの文化・街・作品"
+  },
+  {
+    "id": "fr",
+    "code": "FR",
+    "name": "フランス",
+    "description": "フランスの文化・街・作品"
+  },
+  {
+    "id": "it",
+    "code": "IT",
+    "name": "イタリア",
+    "description": "イタリアの文化・街・作品"
+  },
+  {
+    "id": "in",
+    "code": "IN",
+    "name": "インド",
+    "description": "インドの文化・街・作品"
+  },
+  {
+    "id": "br",
+    "code": "BR",
+    "name": "ブラジル",
+    "description": "ブラジルの文化・街・作品"
+  },
+  {
+    "id": "ca",
+    "code": "CA",
+    "name": "カナダ",
+    "description": "カナダの自然・文化・街・作品"
+  },
+  {
+    "id": "au",
+    "code": "AU",
+    "name": "オーストラリア",
+    "description": "オーストラリアの自然・文化・作品"
+  },
+  {
+    "id": "de",
+    "code": "DE",
+    "name": "ドイツ",
+    "description": "ドイツの文化・歴史・技術・作品"
+  },
+  {
+    "id": "es",
+    "code": "ES",
+    "name": "スペイン",
+    "description": "スペインの文化・芸術・食・作品"
+  },
+  {
+    "id": "mx",
+    "code": "MX",
+    "name": "メキシコ",
+    "description": "メキシコの文化・歴史・食・作品"
+  },
+  {
+    "id": "th",
+    "code": "TH",
+    "name": "タイ",
+    "description": "タイの文化・街・食・作品"
+  },
+  {
+    "id": "id",
+    "code": "ID",
+    "name": "インドネシア",
+    "description": "インドネシアの自然・文化・食・作品"
+  },
+  {
+    "id": "vn",
+    "code": "VN",
+    "name": "ベトナム",
+    "description": "ベトナムの自然・文化・食・作品"
+  }
+]

@@ -96,5 +96,61 @@
     "description": "車・飛行機・ロケット",
     "color": "#3b9aa7",
     "icon": "vehicle"
+  },
+  {
+    "id": "movie",
+    "name": "無料映画",
+    "description": "公式公開・名作・短編映画",
+    "color": "#d14f63",
+    "icon": "film"
+  },
+  {
+    "id": "horror",
+    "name": "ホラー",
+    "description": "怪談・短編・不思議な映像",
+    "color": "#8062b8",
+    "icon": "horror"
+  },
+  {
+    "id": "comedy",
+    "name": "コメディ",
+    "description": "笑い・コント・楽しい映像",
+    "color": "#e8a23a",
+    "icon": "comedy"
+  },
+  {
+    "id": "documentary",
+    "name": "ドキュメンタリー",
+    "description": "社会・自然・人々の物語",
+    "color": "#4d8b76",
+    "icon": "documentary"
+  },
+  {
+    "id": "animation",
+    "name": "アニメーション",
+    "description": "短編・CG・ストップモーション",
+    "color": "#e56e9e",
+    "icon": "animation"
+  },
+  {
+    "id": "dance",
+    "name": "ダンス",
+    "description": "ダンス・舞踊・パフォーマンス",
+    "color": "#e16d4c",
+    "icon": "dance"
+  },
+  {
+    "id": "asmr",
+    "name": "ASMR",
+    "description": "音・ささやき・心地よい作業",
+    "color": "#648fd3",
+    "icon": "sound"
+  },
+  {
+    "id": "livecam",
+    "name": "ライブカメラ",
+    "description": "街・自然・今の景色",
+    "color": "#3da99b",
+    "icon": "camera"
   }
 ]

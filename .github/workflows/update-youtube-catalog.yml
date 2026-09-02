@@ -1,0 +1,58 @@
+name: Update YouTube catalog
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-youtube-catalog
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+    steps:
+      - name: Check API key
+        if: env.YOUTUBE_API_KEY == ''
+        run: echo "YOUTUBE_API_KEY is not configured; catalog update was skipped." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check out repository
+        if: env.YOUTUBE_API_KEY != ''
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        if: env.YOUTUBE_API_KEY != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Add videos for missing country and genre pairs
+        if: env.YOUTUBE_API_KEY != ''
+        run: npm run sync:youtube -- --limit=90
+
+      - name: Verify catalog and site
+        if: env.YOUTUBE_API_KEY != ''
+        run: |
+          npm test
+          npm run validate:data
+          npm run validate:site
+          npm run coverage
+
+      - name: Commit catalog update
+        if: env.YOUTUBE_API_KEY != ''
+        run: |
+          if git diff --quiet -- data/videos.json; then
+            echo "No catalog changes." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/videos.json
+          git commit -m "Update YouTube video catalog"
+          git push

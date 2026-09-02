@@ -7,7 +7,7 @@ const indexPath = join(root, "index.html");
 const html = await readFile(indexPath, "utf8");
 const errors = [];
 
-for (const requiredPath of ["assets/favicon.svg", "assets/og-image.png", "data/genres.json", "data/videos.json"]) {
+for (const requiredPath of ["assets/favicon.svg", "assets/og-image.png", "data/countries.json", "data/genres.json", "data/videos.json", "data/youtube-search.json", "js/i18n.js"]) {
   try {
     await access(join(root, requiredPath));
   } catch {
@@ -23,7 +23,7 @@ const requiredSnippets = [
   '<meta property="og:url"',
   '<meta name="twitter:card"',
   '<link rel="icon"',
-  '<script type="module" src="./js/app.js"',
+  '<script type="module" src="./js/app.js',
 ];
 
 for (const snippet of requiredSnippets) {

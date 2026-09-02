@@ -6,7 +6,7 @@ import { createStorage, sanitizeState } from "../js/storage.js";
 test("壊れた保存値は初期状態へ戻す", () => {
   const storage = { getItem: () => "{broken", setItem: () => {} };
   assert.deepEqual(createStorage(storage).read(), {
-    favorites: [], history: [], recentIds: [], selectedGenre: null, mode: "genre", theme: "system",
+    favorites: [], history: [], recentIds: [], selectedCountry: null, selectedGenre: null, mode: "genre", theme: "system",
   });
 });
 
@@ -15,10 +15,11 @@ test("配列の重複と不正値を除去する", () => {
     favorites: ["a", "a", 1],
     history: ["b", null],
     recentIds: ["c", "c"],
+    selectedCountry: "jp",
     selectedGenre: 7,
     mode: "discovery",
     theme: "unknown",
   }), {
-    favorites: ["a"], history: ["b"], recentIds: ["c"], selectedGenre: null, mode: "discovery", theme: "system",
+    favorites: ["a"], history: ["b"], recentIds: ["c"], selectedCountry: "jp", selectedGenre: null, mode: "discovery", theme: "system",
   });
 });
