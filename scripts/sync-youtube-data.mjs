@@ -6,6 +6,7 @@ import {
   buildSearchQuery,
   findDiscoveryPairsBelowTarget,
   findPairsBelowTarget,
+  isSearchLimitError,
   selectCandidates,
   selectDiscoveryCandidates,
   toCatalogVideo,
@@ -85,17 +86,31 @@ if (!apiKey) {
 }
 
 const searches = [];
+let searchLimitReached = false;
 for (let index = 0; index < targetPairs.length; index += 1) {
   const pair = targetPairs[index];
   console.log(`[${index + 1}/${targetPairs.length}] ${pair.country.id}/${pair.genre.id} を検索`);
-  searches.push({ pair, items: await searchVideos(pair, "relevance") });
+  try {
+    searches.push({ pair, items: await searchVideos(pair, "relevance") });
+  } catch (error) {
+    if (!isSearchLimitError(error)) throw error;
+    console.warn("YouTube APIの検索上限に達したため、ここまでの通常検索結果を保存します。");
+    searchLimitReached = true;
+    break;
+  }
 }
 
 const discoverySearches = [];
-for (let index = 0; index < discoveryTargetPairs.length; index += 1) {
+for (let index = 0; !searchLimitReached && index < discoveryTargetPairs.length; index += 1) {
   const pair = discoveryTargetPairs[index];
   console.log(`[発掘 ${index + 1}/${discoveryTargetPairs.length}] ${pair.country.id}/${pair.genre.id} の低再生候補を検索`);
-  discoverySearches.push({ pair, items: await searchVideos(pair, "date") });
+  try {
+    discoverySearches.push({ pair, items: await searchVideos(pair, "date") });
+  } catch (error) {
+    if (!isSearchLimitError(error)) throw error;
+    console.warn("YouTube APIの検索上限に達したため、ここまでの発掘検索結果を保存します。");
+    searchLimitReached = true;
+  }
 }
 
 const candidateIds = [...searches, ...discoverySearches]
@@ -203,7 +218,9 @@ async function fetchJson(resource, parameters) {
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
     const reason = body?.error?.errors?.[0]?.reason ?? `HTTP ${response.status}`;
-    throw new Error(`YouTube Data APIの呼び出しに失敗しました (${resource}: ${reason})`);
+    const error = new Error(`YouTube Data APIの呼び出しに失敗しました (${resource}: ${reason})`);
+    error.reason = reason;
+    throw error;
   }
   return response.json();
 }

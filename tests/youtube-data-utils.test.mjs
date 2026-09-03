@@ -8,6 +8,7 @@ import {
   findDiscoveryPairsBelowTarget,
   findMissingPairs,
   findPairsBelowTarget,
+  isSearchLimitError,
   selectCandidate,
   selectCandidates,
   selectDiscoveryCandidates,
@@ -44,6 +45,12 @@ test("発掘専用動画だけを数えて不足している組合せを返す",
 
 test("国の検索名とローカライズ済みジャンルで検索語を作る", () => {
   assert.equal(buildSearchQuery({ country: countries[0], genre: genres[1] }, config), "日本 ホラー");
+});
+
+test("検索上限エラーだけを途中保存の対象にする", () => {
+  assert.equal(isSearchLimitError({ reason: "rateLimitExceeded" }), true);
+  assert.equal(isSearchLimitError({ reason: "quotaExceeded" }), true);
+  assert.equal(isSearchLimitError({ reason: "backendError" }), false);
 });
 
 test("HTML文字参照とYouTube時間を正規化する", () => {

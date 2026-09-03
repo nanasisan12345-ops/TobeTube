@@ -43,6 +43,10 @@ export function buildSearchQuery(pair, searchConfig) {
   return [country.queryName, localizedGenre, suffix].filter(Boolean).join(" ");
 }
 
+export function isSearchLimitError(error) {
+  return error?.reason === "rateLimitExceeded" || error?.reason === "quotaExceeded";
+}
+
 export function decodeHtml(value = "") {
   const named = { amp: "&", quot: '"', apos: "'", "#39": "'", lt: "<", gt: ">" };
   return value.replace(/&(#x[0-9a-f]+|#\d+|amp|quot|apos|#39|lt|gt);/gi, (match, entity) => {

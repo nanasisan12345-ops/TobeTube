@@ -26,7 +26,7 @@ on:
         description: Optional genre id such as game
         required: false
   schedule:
-    - cron: "17 2 * * *"
+    - cron: "17 8 * * *"
 
 permissions:
   contents: write
