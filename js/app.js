@@ -1,4 +1,4 @@
-import { loadCatalog } from "./data-store.js?v=20260903b";
+import { loadCatalog } from "./data-store.js?v=20260903c";
 import { countryName, createTranslator, genreName, localeForCountry } from "./i18n.js?v=20260903a";
 import { YouTubePlayerController } from "./player.js";
 import { getEligibleVideos, pickDiscoveryVideo, pickRandomVideo, pushRecentId } from "./randomizer.js?v=20260903b";

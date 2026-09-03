@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-import { validateCatalog } from "../js/data-store.js";
+import { loadCatalog, validateCatalog } from "../js/data-store.js";
 
 const root = new URL("../", import.meta.url);
 
@@ -11,6 +11,22 @@ test("同梱カタログの参照とIDが整合している", async () => {
   const countries = JSON.parse(await readFile(new URL("data/countries.json", root), "utf8"));
   const videos = JSON.parse(await readFile(new URL("data/videos.json", root), "utf8"));
   assert.deepEqual(validateCatalog(genres, countries, videos), []);
+});
+
+test("動画カタログは再検証付きで取得する", async () => {
+  const calls = [];
+  const responses = [
+    [{ id: "game", name: "ゲーム" }],
+    [{ id: "jp", code: "JP", name: "日本" }],
+    [{ id: "aaaaaaaaaaa", title: "動画", channel: "チャンネル", genre: "game", countries: ["jp"] }],
+  ];
+  await loadCatalog(async (url, options) => {
+    const response = responses[calls.length];
+    calls.push({ url: url.toString(), options });
+    return { ok: true, json: async () => response };
+  });
+  assert.equal(calls[2].url.endsWith("/data/videos.json"), true);
+  assert.deepEqual(calls[2].options, { cache: "no-cache" });
 });
 
 test("存在しないジャンル参照を検出する", () => {
