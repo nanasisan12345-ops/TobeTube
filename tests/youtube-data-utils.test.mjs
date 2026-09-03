@@ -8,6 +8,7 @@ import {
   findDiscoveryPairsBelowTarget,
   findMissingPairs,
   findPairsBelowTarget,
+  isPlayableVideo,
   isSearchLimitError,
   selectCandidate,
   selectCandidates,
@@ -67,6 +68,14 @@ test("公開中で埋め込み可能な未登録動画だけを選ぶ", () => {
     ["bbbbbbbbbbb", { id: "bbbbbbbbbbb", status: { privacyStatus: "public", embeddable: true }, contentDetails: { duration: "PT5M" } }],
   ]);
   assert.equal(selectCandidate(items, details, new Set(["aaaaaaaaaaa"])).id, "bbbbbbbbbbb");
+});
+
+test("公開かつ埋め込み可能で通常の長さを持つ動画を判定する", () => {
+  const playable = { status: { privacyStatus: "public", embeddable: true }, contentDetails: { duration: "PT5M" } };
+  assert.equal(isPlayableVideo(playable), true);
+  assert.equal(isPlayableVideo({ ...playable, status: { privacyStatus: "private", embeddable: true } }), false);
+  assert.equal(isPlayableVideo({ ...playable, status: { privacyStatus: "public", embeddable: false } }), false);
+  assert.equal(isPlayableVideo({ ...playable, contentDetails: { duration: "P0D" } }), false);
 });
 
 test("公開中で埋め込み可能な未登録動画を複数選ぶ", () => {

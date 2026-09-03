@@ -77,15 +77,22 @@ export function selectCandidate(searchItems, detailsById, usedIds) {
   return selectCandidates(searchItems, detailsById, usedIds, 1)[0] ?? null;
 }
 
+export function isPlayableVideo(details) {
+  return Boolean(
+    details
+    && details.status?.privacyStatus === "public"
+    && details.status?.embeddable === true
+    && details.contentDetails?.duration !== "P0D"
+  );
+}
+
 export function selectCandidates(searchItems, detailsById, usedIds, limit = Number.POSITIVE_INFINITY) {
   const selected = [];
   const seenIds = new Set(usedIds);
   for (const item of searchItems) {
     const videoId = item?.id?.videoId;
     const details = detailsById.get(videoId);
-    if (!videoId || seenIds.has(videoId) || !details) continue;
-    if (details.status?.privacyStatus !== "public" || details.status?.embeddable !== true) continue;
-    if (details.contentDetails?.duration === "P0D") continue;
+    if (!videoId || seenIds.has(videoId) || !isPlayableVideo(details)) continue;
     selected.push(details);
     seenIds.add(videoId);
     if (selected.length >= limit) break;

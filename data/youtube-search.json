@@ -24,5 +24,18 @@
     "music": "official music",
     "relax": "relaxing",
     "asmr": "ASMR"
+  },
+  "popularCategoryIds": {
+    "game": "20",
+    "music": "10",
+    "animals": "15",
+    "travel": "19",
+    "science": "28",
+    "learning": "27",
+    "sports": "17",
+    "making": "26",
+    "vehicles": "2",
+    "movie": "1",
+    "comedy": "23"
   }
 }

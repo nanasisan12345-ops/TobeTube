@@ -3,6 +3,10 @@ name: Update YouTube catalog
 on:
   workflow_dispatch:
     inputs:
+      popular_limit:
+        description: Number of low-cost regional popular chart requests
+        required: true
+        default: "1000"
       limit:
         description: Number of country and genre searches
         required: true
@@ -58,6 +62,7 @@ jobs:
       - name: Expand country and genre video pools
         if: env.YOUTUBE_API_KEY != ''
         env:
+          SYNC_POPULAR_LIMIT: ${{ inputs.popular_limit || '1000' }}
           SYNC_LIMIT: ${{ inputs.limit || '50' }}
           SYNC_TARGET_COUNT: ${{ inputs.target_count || '50' }}
           SYNC_DISCOVERY_LIMIT: ${{ inputs.discovery_limit || '45' }}
@@ -65,6 +70,11 @@ jobs:
           SYNC_COUNTRY: ${{ inputs.country }}
           SYNC_GENRE: ${{ inputs.genre }}
         run: |
+          popular_args=("--limit=$SYNC_POPULAR_LIMIT" "--target-count=$SYNC_TARGET_COUNT")
+          if [ -n "$SYNC_COUNTRY" ]; then popular_args+=("--country=$SYNC_COUNTRY"); fi
+          if [ -n "$SYNC_GENRE" ]; then popular_args+=("--genre=$SYNC_GENRE"); fi
+          npm run sync:youtube:popular -- "${popular_args[@]}"
+
           args=("--limit=$SYNC_LIMIT" "--target-count=$SYNC_TARGET_COUNT" "--discovery-limit=$SYNC_DISCOVERY_LIMIT" "--discovery-target-count=$SYNC_DISCOVERY_TARGET_COUNT")
           if [ -n "$SYNC_COUNTRY" ]; then args+=("--country=$SYNC_COUNTRY"); fi
           if [ -n "$SYNC_GENRE" ]; then args+=("--genre=$SYNC_GENRE"); fi
