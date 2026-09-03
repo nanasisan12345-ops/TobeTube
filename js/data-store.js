@@ -1,6 +1,6 @@
 const GENRES_URL = new URL("../data/genres.json", import.meta.url);
 const COUNTRIES_URL = new URL("../data/countries.json", import.meta.url);
-const VIDEOS_URL = new URL("../data/videos.json", import.meta.url);
+const VIDEOS_URL = new URL("../data/videos.json?v=20260903b", import.meta.url);
 
 export async function loadCatalog(fetcher = fetch) {
   const [genresResponse, countriesResponse, videosResponse] = await Promise.all([
