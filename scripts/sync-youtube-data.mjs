@@ -7,6 +7,7 @@ import {
   findDiscoveryPairsBelowTarget,
   findPairsBelowTarget,
   isSearchLimitError,
+  isYouTubeChannelId,
   selectCandidates,
   selectDiscoveryCandidates,
   toCatalogVideo,
@@ -167,14 +168,23 @@ for (const search of searches) {
 }
 
 let refreshedCount = 0;
+let channelIdCount = 0;
 const refreshedVideos = videos.map((video) => {
-  const value = Number(detailsById.get(video.id)?.statistics?.viewCount);
-  if (!Number.isSafeInteger(value) || value < 0 || value === video.viewCount) return video;
-  refreshedCount += 1;
-  return { ...video, viewCount: value };
+  const details = detailsById.get(video.id);
+  const updates = {};
+  const value = Number(details?.statistics?.viewCount);
+  if (Number.isSafeInteger(value) && value >= 0 && value !== video.viewCount) {
+    updates.viewCount = value;
+    refreshedCount += 1;
+  }
+  if (isYouTubeChannelId(details?.snippet?.channelId) && details.snippet.channelId !== video.channelId) {
+    updates.channelId = details.snippet.channelId;
+    channelIdCount += 1;
+  }
+  return Object.keys(updates).length > 0 ? { ...video, ...updates } : video;
 });
 
-if (additions.length === 0 && refreshedCount === 0) {
+if (additions.length === 0 && refreshedCount === 0 && channelIdCount === 0) {
   console.log("追加・更新できる動画はありませんでした。videos.jsonは変更していません。");
   process.exit(0);
 }
@@ -186,7 +196,7 @@ await writeFile(temporaryPath, `${JSON.stringify(updatedVideos, null, 2)}\n`, "u
 await rename(temporaryPath, videosPath);
 const remainingPairs = findPairsBelowTarget(countries, genres, updatedVideos, targetCount).length;
 const remainingDiscoveryPairs = findDiscoveryPairsBelowTarget(countries, genres, updatedVideos, discoveryTargetCount).length;
-console.log(`通常${additions.length - discoveryAdditionCount}本、発掘専用${discoveryAdditionCount}本を追加し、${refreshedCount}本の再生数を更新しました。`);
+console.log(`通常${additions.length - discoveryAdditionCount}本、発掘専用${discoveryAdditionCount}本を追加し、${refreshedCount}本の再生数と${channelIdCount}本のチャンネルIDを更新しました。`);
 console.log(`目標未満は通常${remainingPairs}組、発掘${remainingDiscoveryPairs}組です。`);
 
 async function readJson(name) {

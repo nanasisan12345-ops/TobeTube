@@ -70,3 +70,12 @@ test("発掘専用フラグは真偽値だけを許可する", () => {
   );
   assert.match(errors.join("\n"), /discovery/);
 });
+
+test("不正なチャンネルIDを検出する", () => {
+  const errors = validateCatalog(
+    [{ id: "game", name: "ゲーム" }],
+    [{ id: "jp", code: "JP", name: "日本" }],
+    [{ id: "aaaaaaaaaaa", title: "動画", channel: "チャンネル", genre: "game", countries: ["jp"], channelId: "invalid" }],
+  );
+  assert.match(errors.join("\n"), /channelId/);
+});

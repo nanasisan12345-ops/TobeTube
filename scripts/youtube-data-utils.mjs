@@ -90,6 +90,10 @@ export function isPlayableVideo(details) {
   );
 }
 
+export function isYouTubeChannelId(value) {
+  return /^UC[A-Za-z0-9_-]{22}$/.test(value ?? "");
+}
+
 export function selectCandidates(searchItems, detailsById, usedIds, limit = Number.POSITIVE_INFINITY) {
   const selected = [];
   const seenIds = new Set(usedIds);
@@ -127,6 +131,7 @@ export function toCatalogVideo(details, pair, searchConfig, { discovery = false 
     source: "youtube-data-api"
   };
   if (discovery) video.discovery = true;
+  if (isYouTubeChannelId(details.snippet?.channelId)) video.channelId = details.snippet.channelId;
   const viewCount = Number(details.statistics?.viewCount);
   if (Number.isSafeInteger(viewCount) && viewCount >= 0) video.viewCount = viewCount;
   return video;

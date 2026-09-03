@@ -11,6 +11,7 @@ import {
   isPlayableVideo,
   isSearchLimitError,
   isUnavailableVideoChartError,
+  isYouTubeChannelId,
   selectCandidate,
   selectCandidates,
   selectDiscoveryCandidates,
@@ -85,6 +86,11 @@ test("公開かつ埋め込み可能で通常の長さを持つ動画を判定�
   assert.equal(isPlayableVideo({ ...playable, contentDetails: { duration: "P0D" } }), false);
 });
 
+test("YouTubeチャンネルIDを判定する", () => {
+  assert.equal(isYouTubeChannelId("UC1234567890123456789012"), true);
+  assert.equal(isYouTubeChannelId("not-a-channel"), false);
+});
+
 test("公開中で埋め込み可能な未登録動画を複数選ぶ", () => {
   const items = [
     { id: { videoId: "aaaaaaaaaaa" } },
@@ -118,9 +124,9 @@ test("発掘候補を再生数の少ない順で選ぶ", () => {
 });
 
 test("API詳細を既存カタログ形式へ変換する", () => {
-  const details = { id: "bbbbbbbbbbb", snippet: { title: "A &amp; B", channelTitle: "Channel" }, status: { privacyStatus: "public", embeddable: true }, contentDetails: { duration: "PT5M" }, statistics: { viewCount: "123" } };
+  const details = { id: "bbbbbbbbbbb", snippet: { title: "A &amp; B", channelTitle: "Channel", channelId: "UC1234567890123456789012" }, status: { privacyStatus: "public", embeddable: true }, contentDetails: { duration: "PT5M" }, statistics: { viewCount: "123" } };
   const video = toCatalogVideo(details, { country: countries[0], genre: genres[1] }, config);
-  assert.deepEqual(video, { id: "bbbbbbbbbbb", title: "A & B", channel: "Channel", genre: "horror", duration: "medium", tags: ["ホラー"], countries: ["jp"], source: "youtube-data-api", viewCount: 123 });
+  assert.deepEqual(video, { id: "bbbbbbbbbbb", title: "A & B", channel: "Channel", genre: "horror", duration: "medium", tags: ["ホラー"], countries: ["jp"], source: "youtube-data-api", channelId: "UC1234567890123456789012", viewCount: 123 });
 });
 
 test("発掘専用候補をカタログ上で識別できる", () => {

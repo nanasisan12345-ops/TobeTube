@@ -80,6 +80,9 @@ export function validateCatalog(genres, countries, videos) {
     if (video?.discovery !== undefined && typeof video.discovery !== "boolean") {
       errors.push(`動画 ${video?.id ?? "(なし)"} の discovery が正しくありません`);
     }
+    if (video?.channelId !== undefined && !/^UC[A-Za-z0-9_-]{22}$/.test(video.channelId)) {
+      errors.push(`動画 ${video?.id ?? "(なし)"} の channelId が正しくありません`);
+    }
     if (!genreIds.has(video?.genre)) {
       errors.push(`動画 ${video?.id ?? "(なし)"} のジャンルが存在しません: ${video?.genre}`);
     }

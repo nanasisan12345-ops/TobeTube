@@ -7,6 +7,7 @@
     "test": "node --test",
     "sync:youtube": "node scripts/sync-youtube-data.mjs",
     "sync:youtube:popular": "node scripts/sync-youtube-popular.mjs",
+    "sync:youtube:channels": "node scripts/sync-youtube-channels.mjs",
     "coverage": "node scripts/validate-coverage.mjs",
     "validate:coverage": "node scripts/validate-coverage.mjs --require-full",
     "validate:data": "node scripts/validate-data.mjs",
