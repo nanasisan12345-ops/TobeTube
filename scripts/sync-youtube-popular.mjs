@@ -62,10 +62,11 @@ if (!apiKey) {
   throw new Error("YOUTUBE_API_KEY が設定されていません。キーはコードに書かず、環境変数またはGitHub ActionsのSecretへ設定してください。");
 }
 
-let videos = originalVideos.map((video) => ({
-  ...video,
-  countries: Array.isArray(video.countries) ? [...video.countries] : [],
-}));
+let videos = originalVideos.map((video) => (
+  Array.isArray(video.countries)
+    ? { ...video, countries: [...video.countries] }
+    : { ...video }
+));
 let videoIndex = new Map(videos.map((video, index) => [video.id, index]));
 const supportedCategoriesByCountry = new Map();
 let addedVideos = 0;
@@ -95,8 +96,9 @@ for (let index = 0; index < targetPairs.length; index += 1) {
       const existingIndex = videoIndex.get(details.id);
       if (existingIndex !== undefined) {
         const existing = videos[existingIndex];
-        if (existing.discovery === true || existing.genre !== pair.genre.id || existing.countries.includes(pair.country.id)) continue;
-        videos[existingIndex] = { ...existing, countries: [...existing.countries, pair.country.id] };
+        const existingCountries = Array.isArray(existing.countries) ? existing.countries : [];
+        if (existing.discovery === true || existing.genre !== pair.genre.id || existingCountries.includes(pair.country.id)) continue;
+        videos[existingIndex] = { ...existing, countries: [...existingCountries, pair.country.id] };
         addedCountryLinks += 1;
         remaining -= 1;
         continue;
