@@ -143,6 +143,17 @@ const allGenreNames = {
   es: "Todos los géneros", th: "ทุกหมวดหมู่", id: "Semua genre", vi: "Tất cả thể loại",
 };
 
+const genreGroupNames = {
+  entertainment: { ja: "エンタメ", en: "Entertainment", ko: "엔터테인먼트", fr: "Divertissement", it: "Intrattenimento", hi: "मनोरंजन", "pt-BR": "Entretenimento", de: "Unterhaltung", es: "Entretenimiento", th: "บันเทิง", id: "Hiburan", vi: "Giải trí" },
+  knowledge: { ja: "知識・テクノロジー", en: "Knowledge & Technology", ko: "지식·기술", fr: "Savoirs et technologie", it: "Conoscenza e tecnologia", hi: "ज्ञान और तकनीक", "pt-BR": "Conhecimento e tecnologia", de: "Wissen und Technik", es: "Conocimiento y tecnología", th: "ความรู้และเทคโนโลยี", id: "Pengetahuan dan teknologi", vi: "Kiến thức và công nghệ" },
+  life: { ja: "暮らし・旅", en: "Life & Travel", ko: "생활·여행", fr: "Vie et voyage", it: "Vita e viaggi", hi: "जीवन और यात्रा", "pt-BR": "Vida e viagem", de: "Leben und Reisen", es: "Vida y viajes", th: "ชีวิตและการเดินทาง", id: "Kehidupan dan perjalanan", vi: "Cuộc sống và du lịch" },
+  nature: { ja: "自然・動物", en: "Nature & Animals", ko: "자연·동물", fr: "Nature et animaux", it: "Natura e animali", hi: "प्रकृति और जानवर", "pt-BR": "Natureza e animais", de: "Natur und Tiere", es: "Naturaleza y animales", th: "ธรรมชาติและสัตว์", id: "Alam dan hewan", vi: "Thiên nhiên và động vật" },
+  activity: { ja: "スポーツ", en: "Sports", ko: "스포츠", fr: "Sport", it: "Sport", hi: "खेल", "pt-BR": "Esportes", de: "Sport", es: "Deportes", th: "กีฬา", id: "Olahraga", vi: "Thể thao" },
+  creative: { ja: "創作・ものづくり", en: "Creative & Making", ko: "창작·만들기", fr: "Création et fabrication", it: "Creatività e creazione", hi: "रचना और निर्माण", "pt-BR": "Criação e fabricação", de: "Kreatives und Selbermachen", es: "Creación y fabricación", th: "สร้างสรรค์และงานฝีมือ", id: "Kreasi dan pembuatan", vi: "Sáng tạo và chế tác" },
+  transport: { ja: "乗りもの", en: "Transport", ko: "탈것", fr: "Transports", it: "Trasporti", hi: "परिवहन", "pt-BR": "Transportes", de: "Verkehr", es: "Transportes", th: "ยานพาหนะ", id: "Transportasi", vi: "Phương tiện" },
+  other: { ja: "その他", en: "Other", ko: "기타", fr: "Autres", it: "Altro", hi: "अन्य", "pt-BR": "Outros", de: "Weitere", es: "Otros", th: "อื่น ๆ", id: "Lainnya", vi: "Khác" },
+};
+
 export function localeForCountry(countryId) {
   return COUNTRY_LOCALES[countryId] ?? "ja";
 }
@@ -162,11 +173,17 @@ export function createTranslator(locale = "ja") {
   };
 }
 
-export function genreName(genreId, locale = "ja", fallback = genreId) {
+export function genreName(genreId, locale = "ja", fallback = genreId, names = null) {
   if (genreId === "all") return allGenreNames[locale] ?? allGenreNames.en;
+  if (names) return names[locale] ?? names[locale.split("-")[0]] ?? names.en ?? fallback;
   const index = genreIds.indexOf(genreId);
   if (index < 0) return fallback;
   return (genreNames[locale] ?? genreNames.en)[index] ?? fallback;
+}
+
+export function genreGroupName(groupId, locale = "ja") {
+  const names = genreGroupNames[groupId] ?? genreGroupNames.other;
+  return names[locale] ?? names[locale.split("-")[0]] ?? names.en;
 }
 
 export function countryName(countryCode, locale = "ja", fallback = countryCode) {
@@ -189,6 +206,9 @@ export function validateTranslations() {
     }
     for (const [key, descriptions] of Object.entries(modeDescriptions)) {
       if (!descriptions[locale]) errors.push(`${locale}: ${key}`);
+    }
+    for (const [groupId, names] of Object.entries(genreGroupNames)) {
+      if (!names[locale]) errors.push(`${locale}: genre group ${groupId}`);
     }
   }
   for (const locale of new Set(Object.values(COUNTRY_LOCALES))) {

@@ -4,7 +4,7 @@
 
 国とジャンルからYouTube動画をランダムに選べる動画発掘サイトです。
 
-最初に16か国から国を選び、人気動画を優先する通常モード、または再生数の少ない動画を優先する「発掘モード」を利用できます。どちらも「すべてのジャンル」または22の個別ジャンルを選べます。お気に入り、最近見た動画、共有リンク、ライト／ダークテーマにも対応しています。
+最初に16か国から国を選び、人気動画を優先する通常モード、または再生数の少ない動画を優先する「発掘モード」を利用できます。ジャンルは大分類ごとに整理され、動画が十分集まった細分化ジャンルが自動的に増えます。お気に入り、最近見た動画、共有リンク、ライト／ダークテーマにも対応しています。
 
 国を選ぶと、ページ全体がその国の主要言語へ切り替わります。日本語、韓国語、英語、フランス語、イタリア語、ヒンディー語、ポルトガル語、ドイツ語、スペイン語、タイ語、インドネシア語、ベトナム語に対応しています。
 
@@ -83,20 +83,27 @@ Windowsでは `run.bat` をダブルクリックしてください。ブラウ�
 
 編集後は `npm run validate:data` を実行すると、ID重複や存在しないジャンルを検出できます。埋め込み可否も確認する場合は `npm run validate:youtube` を実行します。
 
-## ジャンルを追加する
+## ジャンルの自動追加
 
-1. `data/genres.json` にジャンルを追加します。
-2. `data/videos.json` に、そのジャンルIDを使う動画を1本以上追加します。
+`data/genres.json` には、公開中のジャンルに加えて `status: "candidate"` の細分化候補を登録できます。候補はYouTube Data APIの通常検索・発掘検索でも収集対象になります。
+
+毎日の収集後に `npm run genres:promote` が実行され、候補に動画が12本以上かつ3か国以上集まると `status: "active"` へ変更されます。公開基準を満たすまでは選択画面へ出ないため、0～1本しかない空に近いジャンルが増殖しません。親ジャンルを選んだ場合は、公開前を含む子ジャンルの動画も抽選対象になります。
 
 ```json
 {
-  "id": "sports",
-  "name": "スポーツ",
-  "description": "試合・技術・名場面",
-  "color": "#2F80ED",
-  "icon": "compass"
+  "id": "rpg",
+  "name": "RPG",
+  "description": "物語・育成・冒険",
+  "color": "#775bd6",
+  "icon": "gamepad",
+  "parentId": "game",
+  "status": "candidate",
+  "activation": { "minimumVideos": 12, "minimumCountries": 3 },
+  "names": { "ja": "RPG", "en": "RPG" }
 }
 ```
+
+実際の候補では、サイト対応中の12言語すべての `names` が必要です。現在はRPG、FPS、インディーゲーム、レトロゲーム、ロック、ジャズ、クラシック音楽、屋台料理、パン・お菓子、街歩き、プログラミング、AI、語学、サッカー、木工、鉄道、航空、短編映画、怪談、野生動物、ペットの21候補を自動収集中です。
 
 利用できるアイコン名は `gamepad`、`music`、`paw`、`cooking`、`compass`、`planet`、`bulb`、`waves`、`trophy`、`chip`、`history`、`hammer`、`palette`、`vehicle`、`film`、`horror`、`comedy`、`documentary`、`animation`、`dance`、`sound`、`camera` です。未登録の名前は `compass` で表示されます。
 
@@ -164,7 +171,7 @@ python scripts/generate-assets.py
 
 ## YouTube Data APIについて
 
-YouTube Data API v3は、16か国×22ジャンルの大規模なランダム候補プールを自動収集するために使います。公開ページは自動収集済みの静的JSONだけを読むため、閲覧者へAPIキーが送られることはありません。
+YouTube Data API v3は、16か国×公開ジャンルと細分化候補の大規模なランダム候補プールを自動収集するために使います。公開ページは自動収集済みの静的JSONだけを読むため、閲覧者へAPIキーが送られることはありません。
 
 ### 初回設定
 
@@ -181,6 +188,7 @@ APIキーはチャット、HTML、JavaScript、JSON、READMEへ貼り付けな�
 npm run sync:youtube:popular -- --target-count=50
 npm run sync:youtube:channels -- --limit=50 --target-count=100 --pages=2
 npm run sync:youtube -- --limit=50 --target-count=50 --discovery-limit=45 --discovery-target-count=12
+npm run genres:promote
 ```
 
 同期処理は次の条件をすべて満たす動画だけを追加します。
@@ -200,7 +208,7 @@ npm run sync:youtube -- --limit=50 --target-count=50 --discovery-limit=45 --disc
 
 検索途中でYouTube APIの日次上限へ達した場合も、エラー直前までに取得できた候補を保存してコミットします。
 
-1回の実行では、低コストな国別人気チャートとチャンネル投稿一覧を先に収集してから、通常検索を最大50組、発掘検索を最大45組、合計95組に抑えて実行します。GitHub ActionsはYouTube APIの日次上限がリセットされた後、毎日17時17分ごろ（日本時間）に実行され、候補が少ない組み合わせから自動的に追加してコミットします。`--limit=0` を指定すれば発掘検索だけを実行できます。手動実行では `country` と `genre` を指定して、たとえば日本だけを優先的に増やすこともできます。現在の0本の組み合わせは `npm run coverage` で確認できます。
+1回の実行では、低コストな国別人気チャートとチャンネル投稿一覧を先に収集してから、通常検索を最大50組、発掘検索を最大45組、合計95組に抑えて実行します。最後に細分化候補の動画数と対象国数を判定し、基準を満たしたジャンルを自動公開します。GitHub ActionsはYouTube APIの日次上限がリセットされた後、毎日17時17分ごろ（日本時間）に実行され、候補が少ない組み合わせから自動的に追加してコミットします。`--limit=0` を指定すれば発掘検索だけを実行できます。手動実行では `country` と `genre` を指定して、たとえば日本だけを優先的に増やすこともできます。現在の0本の組み合わせは `npm run coverage` で確認できます。
 
 APIキーが未設定の間、定期処理は安全にスキップされ、現在の手選定カタログでサイトが動作します。
 

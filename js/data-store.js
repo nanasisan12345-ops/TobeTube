@@ -1,6 +1,7 @@
 const GENRES_URL = new URL("../data/genres.json", import.meta.url);
 const COUNTRIES_URL = new URL("../data/countries.json", import.meta.url);
 const VIDEOS_URL = new URL("../data/videos.json", import.meta.url);
+const REQUIRED_GENRE_LOCALES = ["ja", "en", "ko", "fr", "it", "hi", "pt-BR", "de", "es", "th", "id", "vi"];
 
 export async function loadCatalog(fetcher = fetch) {
   const [genresResponse, countriesResponse, videosResponse] = await Promise.all([
@@ -51,7 +52,30 @@ export function validateCatalog(genres, countries, videos) {
     if (genreIds.has(genre.id)) {
       errors.push(`ジャンルIDが重複しています: ${genre.id}`);
     }
+    if (genre.status !== undefined && !["active", "candidate"].includes(genre.status)) {
+      errors.push(`ジャンル ${genre.id} の status が正しくありません`);
+    }
+    if (genre.status === "candidate") {
+      if (!genre.parentId) errors.push(`候補ジャンル ${genre.id} に parentId がありません`);
+      if (REQUIRED_GENRE_LOCALES.some((locale) => !genre.names?.[locale])) {
+        errors.push(`候補ジャンル ${genre.id} に多言語名がありません`);
+      }
+      if (!Number.isInteger(genre.activation?.minimumVideos) || genre.activation.minimumVideos < 1) {
+        errors.push(`候補ジャンル ${genre.id} の minimumVideos が正しくありません`);
+      }
+      if (!Number.isInteger(genre.activation?.minimumCountries) || genre.activation.minimumCountries < 1) {
+        errors.push(`候補ジャンル ${genre.id} の minimumCountries が正しくありません`);
+      }
+    }
     genreIds.add(genre.id);
+  }
+  for (const genre of genres) {
+    if (genre.parentId && !genreIds.has(genre.parentId)) {
+      errors.push(`ジャンル ${genre.id} の親ジャンルが存在しません: ${genre.parentId}`);
+    }
+    if (genre.parentId === genre.id) {
+      errors.push(`ジャンル ${genre.id} が自分自身を親にしています`);
+    }
   }
 
   const countryIds = new Set();

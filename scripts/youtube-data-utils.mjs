@@ -38,7 +38,7 @@ export function findDiscoveryPairsBelowTarget(countries, genres, videos, targetC
 export function buildSearchQuery(pair, searchConfig) {
   const country = searchConfig.countries[pair.country.id];
   if (!country) throw new Error(`検索設定がない国です: ${pair.country.id}`);
-  const localizedGenre = genreName(pair.genre.id, country.language, pair.genre.name);
+  const localizedGenre = genreName(pair.genre.id, country.language, pair.genre.name, pair.genre.names);
   const suffix = searchConfig.querySuffixes[pair.genre.id] ?? "";
   return [country.queryName, localizedGenre, suffix].filter(Boolean).join(" ");
 }
@@ -126,7 +126,7 @@ export function toCatalogVideo(details, pair, searchConfig, { discovery = false 
     channel: decodeHtml(details.snippet?.channelTitle ?? "YouTube"),
     genre: pair.genre.id,
     duration: durationBucket(details.contentDetails?.duration),
-    tags: [genreName(pair.genre.id, locale, pair.genre.name)],
+    tags: [genreName(pair.genre.id, locale, pair.genre.name, pair.genre.names)],
     countries: [pair.country.id],
     source: "youtube-data-api"
   };

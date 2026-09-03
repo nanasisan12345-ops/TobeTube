@@ -99,6 +99,7 @@ jobs:
           if [ -n "$SYNC_COUNTRY" ]; then args+=("--country=$SYNC_COUNTRY"); fi
           if [ -n "$SYNC_GENRE" ]; then args+=("--genre=$SYNC_GENRE"); fi
           npm run sync:youtube -- "${args[@]}"
+          npm run genres:promote
 
       - name: Verify catalog and site
         if: env.YOUTUBE_API_KEY != ''
@@ -111,12 +112,12 @@ jobs:
       - name: Commit catalog update
         if: env.YOUTUBE_API_KEY != ''
         run: |
-          if git diff --quiet -- data/videos.json data/youtube-channel-sync.json; then
+          if git diff --quiet -- data/videos.json data/genres.json data/youtube-channel-sync.json; then
             echo "No catalog changes." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/videos.json data/youtube-channel-sync.json
+          git add data/videos.json data/genres.json data/youtube-channel-sync.json
           git commit -m "Update YouTube video catalog"
           git push

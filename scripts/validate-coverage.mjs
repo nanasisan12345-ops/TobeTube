@@ -1,14 +1,16 @@
 import { readFile } from "node:fs/promises";
 
 import { findMissingPairs } from "./youtube-data-utils.mjs";
+import { publicGenres } from "../js/genre-taxonomy.js";
 
 const [countries, genres, videos] = await Promise.all([
   readJson("countries.json"),
   readJson("genres.json"),
   readJson("videos.json"),
 ]);
-const missing = findMissingPairs(countries, genres, videos);
-const total = countries.length * genres.length;
+const visibleGenres = publicGenres(genres);
+const missing = findMissingPairs(countries, visibleGenres, videos);
+const total = countries.length * visibleGenres.length;
 console.log(`国×ジャンルの登録状況: ${total - missing.length}/${total} 組`);
 
 if (missing.length > 0) {

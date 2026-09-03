@@ -1,12 +1,14 @@
 export const DEFAULT_RECENT_LIMIT = 8;
 
-export function getEligibleVideos(videos, genreId = "all", countryId = null) {
+export function getEligibleVideos(videos, genreId = "all", countryId = null, genreIds = null) {
   if (!Array.isArray(videos)) {
     return [];
   }
 
+  const selectedGenres = Array.isArray(genreIds) ? new Set(genreIds) : null;
   return videos.filter((video) => {
-    const matchesGenre = genreId === "all" || video.genre === genreId;
+    const matchesGenre = genreId === "all"
+      || (selectedGenres ? selectedGenres.has(video.genre) : video.genre === genreId);
     const matchesCountry = !countryId || video.countries?.includes(countryId);
     return matchesGenre && matchesCountry;
   });
@@ -14,9 +16,9 @@ export function getEligibleVideos(videos, genreId = "all", countryId = null) {
 
 export function pickRandomVideo(
   videos,
-  { genreId = "all", countryId = null, recentIds = [], random = Math.random } = {},
+  { genreId = "all", genreIds = null, countryId = null, recentIds = [], random = Math.random } = {},
 ) {
-  const eligible = getEligibleVideos(videos, genreId, countryId);
+  const eligible = getEligibleVideos(videos, genreId, countryId, genreIds);
   if (eligible.length === 0) {
     return null;
   }
@@ -41,6 +43,7 @@ export function pickDiscoveryVideo(
   videos,
   {
     genreId = "all",
+    genreIds = null,
     countryId = null,
     historyIds = [],
     recentIds = [],
@@ -48,7 +51,7 @@ export function pickDiscoveryVideo(
     random = Math.random,
   } = {},
 ) {
-  const eligible = getEligibleVideos(videos, genreId, countryId);
+  const eligible = getEligibleVideos(videos, genreId, countryId, genreIds);
   if (eligible.length === 0) {
     return null;
   }

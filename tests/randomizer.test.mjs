@@ -24,6 +24,14 @@ test("指定国とジャンルの両方で抽選対象を絞る", () => {
   assert.deepEqual(getEligibleVideos(videos, "game", "jp"), [videos[0]]);
 });
 
+test("大分類では指定された子ジャンルも抽選対象にする", () => {
+  const pool = [...videos, { id: "ddddddddddd", genre: "rpg", countries: ["jp"] }];
+  assert.deepEqual(
+    getEligibleVideos(pool, "game", "jp", ["game", "rpg"]),
+    [pool[0], pool[3]],
+  );
+});
+
 test("直近の動画を候補から外す", () => {
   const picked = pickRandomVideo(videos, {
     genreId: "game",

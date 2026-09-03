@@ -5,6 +5,7 @@ import {
   COUNTRY_LOCALES,
   countryName,
   createTranslator,
+  genreGroupName,
   genreName,
   localeForCountry,
   validateTranslations,
@@ -17,7 +18,7 @@ test("16か国に主要言語が割り当てられている", () => {
   assert.equal(localeForCountry("unknown"), "ja");
 });
 
-test("全言語のUI文言と22ジャンル名が揃っている", () => {
+test("全言語のUI文言・基本ジャンル名・大分類名が揃っている", () => {
   assert.deepEqual(validateTranslations(), []);
 });
 
@@ -27,5 +28,7 @@ test("置換を含む翻訳と地域名を返す", () => {
   assert.match(createTranslator("ja")("discoveryDescription"), /再生数の少ない動画を最優先/);
   assert.doesNotMatch(createTranslator("en")("chooseModeDesc"), /unwatched/i);
   assert.equal(genreName("horror", "ko"), "공포");
+  assert.equal(genreName("rpg", "de", "RPG", { en: "RPG", de: "Rollenspiele" }), "Rollenspiele");
+  assert.equal(genreGroupName("creative", "en"), "Creative & Making");
   assert.match(countryName("DE", "de"), /Deutschland/);
 });

@@ -1,7 +1,8 @@
-import { loadCatalog } from "./data-store.js?v=20260903c";
-import { countryName, createTranslator, genreName, localeForCountry } from "./i18n.js?v=20260903a";
+import { loadCatalog } from "./data-store.js?v=20260904a";
+import { countryName, createTranslator, genreGroupName, genreName, localeForCountry } from "./i18n.js?v=20260904a";
+import { genreSelectionIds, groupPublicGenres, isPublicGenre, publicGenres } from "./genre-taxonomy.js?v=20260904a";
 import { YouTubePlayerController } from "./player.js";
-import { getEligibleVideos, pickDiscoveryVideo, pickRandomVideo, pushRecentId } from "./randomizer.js?v=20260903b";
+import { getEligibleVideos, pickDiscoveryVideo, pickRandomVideo, pushRecentId } from "./randomizer.js?v=20260904a";
 import { createStorage } from "./storage.js";
 
 const iconPaths = {
@@ -109,7 +110,7 @@ async function init() {
       state.saved.mode = "genre";
       storage.write(state.saved);
     }
-    if (state.selectedGenre !== "all" && !state.genres.some((genre) => genre.id === state.selectedGenre)) {
+    if (state.selectedGenre !== "all" && !state.genres.some((genre) => genre.id === state.selectedGenre && isPublicGenre(genre))) {
       state.selectedGenre = null;
     }
     if (state.mode === "discovery" && !state.selectedGenre) {
@@ -193,9 +194,14 @@ function applyLocale() {
   for (const button of elements.genreGrid.querySelectorAll(".genre-button")) {
     const genre = state.genres.find((item) => item.id === button.dataset.genreId);
     if (genre || button.dataset.genreId === "all") {
-      button.querySelector("strong").textContent = genreName(button.dataset.genreId, state.locale, genre?.name);
+      button.querySelector("strong").textContent = genreName(button.dataset.genreId, state.locale, genre?.name, genre?.names);
     }
   }
+  for (const heading of elements.genreGrid.querySelectorAll("[data-genre-group]")) {
+    heading.textContent = genreGroupName(heading.dataset.genreGroup, state.locale);
+  }
+  const footerStats = document.querySelector('[data-i18n="footerStats"]');
+  if (footerStats) footerStats.textContent = state.t("footerStats").replace("22", String(publicGenres(state.genres).length));
   applyTheme(state.saved.theme);
   if (state.currentVideo) renderCurrentVideo(state.currentVideo);
   if (elements.collectionDialog.open) renderCollection();
@@ -256,38 +262,54 @@ function renderCountries() {
 
 function renderGenres() {
   elements.genreGrid.replaceChildren();
-  const displayedGenres = [
-    { id: "all", name: "すべてのジャンル", description: "全ジャンルから選ぶ", color: "#ff5c58", icon: "compass" },
-    ...state.genres,
-  ];
-  for (const genre of displayedGenres) {
-    const button = document.createElement("button");
-    button.className = "genre-button";
-    button.type = "button";
-    button.dataset.genreId = genre.id;
-    button.setAttribute("aria-pressed", String(state.selectedGenre === genre.id));
-    button.style.setProperty("--genre-color", `${genre.color}22`);
+  const allGenre = { id: "all", name: "すべてのジャンル", description: "全ジャンルから選ぶ", color: "#ff5c58", icon: "compass" };
+  const allArea = document.createElement("div");
+  allArea.className = "genre-all-area";
+  allArea.append(createGenreButton(allGenre));
+  elements.genreGrid.append(allArea);
 
-    const symbol = document.createElement("span");
-    symbol.className = "genre-symbol";
-    symbol.style.color = genre.color;
-    symbol.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${iconPaths[genre.icon] ?? iconPaths.compass}</svg>`;
-
-    const copy = document.createElement("span");
-    const name = document.createElement("strong");
-    name.textContent = genreName(genre.id, state.locale, genre.name);
-    const description = document.createElement("small");
-    description.textContent = genre.description;
-    description.dataset.baseDescription = genre.description;
-    copy.append(name, description);
-    button.append(symbol, copy);
-    button.addEventListener("click", async () => {
-      selectGenre(genre.id);
-      await playNext();
-    });
-    elements.genreGrid.append(button);
+  for (const group of groupPublicGenres(state.genres)) {
+    const section = document.createElement("section");
+    section.className = "genre-group";
+    const heading = document.createElement("h3");
+    heading.dataset.genreGroup = group.id;
+    heading.textContent = genreGroupName(group.id, state.locale);
+    const list = document.createElement("div");
+    list.className = "genre-group-grid";
+    list.append(...group.genres.map(createGenreButton));
+    section.append(heading, list);
+    elements.genreGrid.append(section);
   }
   updateGenreAvailability();
+}
+
+function createGenreButton(genre) {
+  const button = document.createElement("button");
+  button.className = "genre-button";
+  if (genre.parentId) button.classList.add("genre-button-subgenre");
+  button.type = "button";
+  button.dataset.genreId = genre.id;
+  button.setAttribute("aria-pressed", String(state.selectedGenre === genre.id));
+  button.style.setProperty("--genre-color", `${genre.color}22`);
+
+  const symbol = document.createElement("span");
+  symbol.className = "genre-symbol";
+  symbol.style.color = genre.color;
+  symbol.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${iconPaths[genre.icon] ?? iconPaths.compass}</svg>`;
+
+  const copy = document.createElement("span");
+  const name = document.createElement("strong");
+  name.textContent = genreName(genre.id, state.locale, genre.name, genre.names);
+  const description = document.createElement("small");
+  description.textContent = genre.description;
+  description.dataset.baseDescription = genre.description;
+  copy.append(name, description);
+  button.append(symbol, copy);
+  button.addEventListener("click", async () => {
+    selectGenre(genre.id);
+    await playNext();
+  });
+  return button;
 }
 
 function selectCountry(countryId, resetChoice = true) {
@@ -369,7 +391,12 @@ function updateGenreAvailability() {
   const buttons = [...elements.genreGrid.querySelectorAll(".genre-button")];
   for (const button of buttons) {
     const count = state.selectedCountry
-      ? getEligibleVideos(state.videos, button.dataset.genreId, state.selectedCountry).length
+      ? getEligibleVideos(
+        state.videos,
+        button.dataset.genreId,
+        state.selectedCountry,
+        genreSelectionIds(button.dataset.genreId, state.genres),
+      ).length
       : 0;
     button.disabled = !state.selectedCountry || count === 0;
     const description = button.querySelector("small");
@@ -383,8 +410,11 @@ function updateGenreAvailability() {
   }
 
   if (state.selectedCountry) {
-    buttons.sort((left, right) => Number(left.disabled) - Number(right.disabled));
-    elements.genreGrid.append(...buttons);
+    for (const list of elements.genreGrid.querySelectorAll(".genre-group-grid")) {
+      const groupButtons = [...list.querySelectorAll(".genre-button")];
+      groupButtons.sort((left, right) => Number(left.disabled) - Number(right.disabled));
+      list.append(...groupButtons);
+    }
   }
 }
 
@@ -405,6 +435,7 @@ async function playNext() {
   const video = state.mode === "discovery"
     ? pickDiscoveryVideo(state.videos, {
       genreId: state.selectedGenre ?? "all",
+      genreIds: genreSelectionIds(state.selectedGenre, state.genres),
       countryId: state.selectedCountry,
       historyIds: state.saved.history,
       recentIds: state.saved.recentIds,
@@ -412,6 +443,7 @@ async function playNext() {
     })
     : pickRandomVideo(state.videos, {
       genreId: state.selectedGenre,
+      genreIds: genreSelectionIds(state.selectedGenre, state.genres),
       countryId: state.selectedCountry,
       recentIds: state.saved.recentIds,
     });
@@ -454,7 +486,7 @@ function renderCurrentVideo(video) {
   const country = state.countries.find((item) => item.id === state.selectedCountry);
   elements.videoGenre.textContent = [
     country ? countryName(country.code, state.locale, country.name) : null,
-    genre ? genreName(genre.id, state.locale, genre.name) : state.t("genreFallback"),
+    genre ? genreName(genre.id, state.locale, genre.name, genre.names) : state.t("genreFallback"),
   ].filter(Boolean).join(" / ");
   elements.playerHeading.textContent = video.title;
   elements.videoChannel.textContent = video.channel;
