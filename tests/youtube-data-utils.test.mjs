@@ -5,10 +5,12 @@ import {
   buildSearchQuery,
   decodeHtml,
   durationBucket,
+  findDiscoveryPairsBelowTarget,
   findMissingPairs,
   findPairsBelowTarget,
   selectCandidate,
   selectCandidates,
+  selectDiscoveryCandidates,
   toCatalogVideo,
 } from "../scripts/youtube-data-utils.mjs";
 
@@ -29,6 +31,15 @@ test("目標本数より少ない組合せを動画数の少ない順で返す",
   const pairs = findPairsBelowTarget(countries, genres, videos, 3);
   assert.deepEqual(pairs.map(({ country, genre, count }) => `${country.id}:${genre.id}:${count}`), ["jp:horror:0", "jp:game:2"]);
   assert.throws(() => findPairsBelowTarget(countries, genres, videos, 0), /1以上の整数/);
+});
+
+test("発掘専用動画だけを数えて不足している組合せを返す", () => {
+  const videos = [
+    { id: "aaaaaaaaaaa", genre: "game", countries: ["jp"] },
+    { id: "bbbbbbbbbbb", genre: "game", countries: ["jp"], discovery: true },
+  ];
+  const pairs = findDiscoveryPairsBelowTarget(countries, genres, videos, 2);
+  assert.deepEqual(pairs.map(({ country, genre, count }) => `${country.id}:${genre.id}:${count}`), ["jp:horror:0", "jp:game:1"]);
 });
 
 test("国の検索名とローカライズ済みジャンルで検索語を作る", () => {
@@ -68,8 +79,30 @@ test("公開中で埋め込み可能な未登録動画を複数選ぶ", () => {
   assert.deepEqual(selected.map(({ id }) => id), ["ccccccccccc", "ddddddddddd"]);
 });
 
+test("発掘候補を再生数の少ない順で選ぶ", () => {
+  const items = [
+    { id: { videoId: "aaaaaaaaaaa" } },
+    { id: { videoId: "bbbbbbbbbbb" } },
+    { id: { videoId: "ccccccccccc" } },
+  ];
+  const details = new Map([
+    ["aaaaaaaaaaa", { id: "aaaaaaaaaaa", status: { privacyStatus: "public", embeddable: true }, contentDetails: { duration: "PT3M" }, statistics: { viewCount: "500" } }],
+    ["bbbbbbbbbbb", { id: "bbbbbbbbbbb", status: { privacyStatus: "public", embeddable: true }, contentDetails: { duration: "PT5M" }, statistics: { viewCount: "7" } }],
+    ["ccccccccccc", { id: "ccccccccccc", status: { privacyStatus: "public", embeddable: true }, contentDetails: { duration: "PT6M" }, statistics: {} }],
+  ]);
+  const selected = selectDiscoveryCandidates(items, details, new Set(), 1);
+  assert.deepEqual(selected.map(({ id }) => id), ["bbbbbbbbbbb"]);
+});
+
 test("API詳細を既存カタログ形式へ変換する", () => {
   const details = { id: "bbbbbbbbbbb", snippet: { title: "A &amp; B", channelTitle: "Channel" }, status: { privacyStatus: "public", embeddable: true }, contentDetails: { duration: "PT5M" }, statistics: { viewCount: "123" } };
   const video = toCatalogVideo(details, { country: countries[0], genre: genres[1] }, config);
   assert.deepEqual(video, { id: "bbbbbbbbbbb", title: "A & B", channel: "Channel", genre: "horror", duration: "medium", tags: ["ホラー"], countries: ["jp"], source: "youtube-data-api", viewCount: 123 });
+});
+
+test("発掘専用候補をカタログ上で識別できる", () => {
+  const details = { id: "bbbbbbbbbbb", snippet: { title: "Discovery", channelTitle: "Channel" }, contentDetails: { duration: "PT5M" }, statistics: { viewCount: "7" } };
+  const video = toCatalogVideo(details, { country: countries[0], genre: genres[0] }, config, { discovery: true });
+  assert.equal(video.discovery, true);
+  assert.equal(video.viewCount, 7);
 });

@@ -45,3 +45,12 @@ test("不正な再生数を検出する", () => {
   );
   assert.match(errors.join("\n"), /viewCount/);
 });
+
+test("発掘専用フラグは真偽値だけを許可する", () => {
+  const errors = validateCatalog(
+    [{ id: "game", name: "ゲーム" }],
+    [{ id: "jp", code: "JP", name: "日本" }],
+    [{ id: "aaaaaaaaaaa", title: "動画", channel: "チャンネル", genre: "game", countries: ["jp"], discovery: "yes" }],
+  );
+  assert.match(errors.join("\n"), /discovery/);
+});

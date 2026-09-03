@@ -21,7 +21,9 @@ export function pickRandomVideo(
     return null;
   }
 
-  return pickAvoidingRecent(preferHighViewCount(eligible), recentIds, random);
+  const regular = eligible.filter((video) => video.discovery !== true);
+  const regularPool = regular.length > 0 ? regular : eligible;
+  return pickAvoidingRecent(preferHighViewCount(regularPool), recentIds, random);
 }
 
 function pickAvoidingRecent(videos, recentIds, random) {
@@ -51,7 +53,9 @@ export function pickDiscoveryVideo(
     return null;
   }
 
-  const lowViewPool = preferLowViewCount(eligible);
+  const dedicated = eligible.filter((video) => video.discovery === true);
+  const sourcePool = dedicated.length > 0 ? dedicated : eligible;
+  const lowViewPool = preferLowViewCount(sourcePool);
   const differentGenre = currentGenre
     ? lowViewPool.filter((video) => video.genre !== currentGenre)
     : lowViewPool;

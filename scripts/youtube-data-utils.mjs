@@ -26,6 +26,15 @@ export function findPairsBelowTarget(countries, genres, videos, targetCount) {
     .sort((left, right) => left.count - right.count);
 }
 
+export function findDiscoveryPairsBelowTarget(countries, genres, videos, targetCount) {
+  return findPairsBelowTarget(
+    countries,
+    genres,
+    videos.filter((video) => video.discovery === true),
+    targetCount,
+  );
+}
+
 export function buildSearchQuery(pair, searchConfig) {
   const country = searchConfig.countries[pair.country.id];
   if (!country) throw new Error(`検索設定がない国です: ${pair.country.id}`);
@@ -80,7 +89,17 @@ export function selectCandidates(searchItems, detailsById, usedIds, limit = Numb
   return selected;
 }
 
-export function toCatalogVideo(details, pair, searchConfig) {
+export function selectDiscoveryCandidates(searchItems, detailsById, usedIds, limit = Number.POSITIVE_INFINITY) {
+  return selectCandidates(searchItems, detailsById, usedIds)
+    .filter((details) => {
+      const viewCount = Number(details.statistics?.viewCount);
+      return Number.isSafeInteger(viewCount) && viewCount >= 0;
+    })
+    .sort((left, right) => Number(left.statistics.viewCount) - Number(right.statistics.viewCount))
+    .slice(0, limit);
+}
+
+export function toCatalogVideo(details, pair, searchConfig, { discovery = false } = {}) {
   const locale = searchConfig.countries[pair.country.id].language;
   const video = {
     id: details.id,
@@ -92,6 +111,7 @@ export function toCatalogVideo(details, pair, searchConfig) {
     countries: [pair.country.id],
     source: "youtube-data-api"
   };
+  if (discovery) video.discovery = true;
   const viewCount = Number(details.statistics?.viewCount);
   if (Number.isSafeInteger(viewCount) && viewCount >= 0) video.viewCount = viewCount;
   return video;

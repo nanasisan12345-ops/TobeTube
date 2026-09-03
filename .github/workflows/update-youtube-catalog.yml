@@ -11,6 +11,14 @@ on:
         description: Target videos per country and genre
         required: true
         default: "50"
+      discovery_limit:
+        description: Number of discovery searches
+        required: true
+        default: "5"
+      discovery_target_count:
+        description: Target discovery videos per country and genre
+        required: true
+        default: "12"
       country:
         description: Optional country id such as jp
         required: false
@@ -52,10 +60,12 @@ jobs:
         env:
           SYNC_LIMIT: ${{ inputs.limit || '90' }}
           SYNC_TARGET_COUNT: ${{ inputs.target_count || '50' }}
+          SYNC_DISCOVERY_LIMIT: ${{ inputs.discovery_limit || '5' }}
+          SYNC_DISCOVERY_TARGET_COUNT: ${{ inputs.discovery_target_count || '12' }}
           SYNC_COUNTRY: ${{ inputs.country }}
           SYNC_GENRE: ${{ inputs.genre }}
         run: |
-          args=("--limit=$SYNC_LIMIT" "--target-count=$SYNC_TARGET_COUNT")
+          args=("--limit=$SYNC_LIMIT" "--target-count=$SYNC_TARGET_COUNT" "--discovery-limit=$SYNC_DISCOVERY_LIMIT" "--discovery-target-count=$SYNC_DISCOVERY_TARGET_COUNT")
           if [ -n "$SYNC_COUNTRY" ]; then args+=("--country=$SYNC_COUNTRY"); fi
           if [ -n "$SYNC_GENRE" ]; then args+=("--genre=$SYNC_GENRE"); fi
           npm run sync:youtube -- "${args[@]}"

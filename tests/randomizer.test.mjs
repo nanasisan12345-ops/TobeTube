@@ -48,6 +48,14 @@ test("通常モードは履歴より高再生数を優先する", () => {
   assert.deepEqual(preferHighViewCount(pool), [pool[0]]);
 });
 
+test("通常モードは発掘専用候補を除外する", () => {
+  const pool = [
+    { id: "regular", viewCount: 10 },
+    { id: "discovery", viewCount: 100000, discovery: true },
+  ];
+  assert.equal(pickRandomVideo(pool, { random: () => 0 }).id, "regular");
+});
+
 test("候補を使い切った場合も直前の動画を避ける", () => {
   const picked = pickRandomVideo(videos, {
     genreId: "game",
@@ -84,6 +92,14 @@ test("発掘モードは未視聴や別ジャンルより低再生数を優先�
     random: () => 0,
   });
   assert.equal(picked.id, "low");
+});
+
+test("発掘モードはAPIで収集した発掘専用候補を最優先する", () => {
+  const pool = [
+    { id: "legacy-low", genre: "game", viewCount: 1 },
+    { id: "dedicated", genre: "game", viewCount: 10, discovery: true },
+  ];
+  assert.equal(pickDiscoveryVideo(pool, { random: () => 0 }).id, "dedicated");
 });
 
 test("発掘モードは可能なら直前と違うジャンルを選ぶ", () => {

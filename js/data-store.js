@@ -77,6 +77,9 @@ export function validateCatalog(genres, countries, videos) {
     if (video?.viewCount !== undefined && (!Number.isSafeInteger(video.viewCount) || video.viewCount < 0)) {
       errors.push(`動画 ${video?.id ?? "(なし)"} の viewCount が正しくありません`);
     }
+    if (video?.discovery !== undefined && typeof video.discovery !== "boolean") {
+      errors.push(`動画 ${video?.id ?? "(なし)"} の discovery が正しくありません`);
+    }
     if (!genreIds.has(video?.genre)) {
       errors.push(`動画 ${video?.id ?? "(なし)"} のジャンルが存在しません: ${video?.genre}`);
     }
