@@ -10,6 +10,7 @@ import {
   findPairsBelowTarget,
   isPlayableVideo,
   isSearchLimitError,
+  isUnavailableVideoChartError,
   selectCandidate,
   selectCandidates,
   selectDiscoveryCandidates,
@@ -52,6 +53,12 @@ test("検索上限エラーだけを途中保存の対象にする", () => {
   assert.equal(isSearchLimitError({ reason: "rateLimitExceeded" }), true);
   assert.equal(isSearchLimitError({ reason: "quotaExceeded" }), true);
   assert.equal(isSearchLimitError({ reason: "backendError" }), false);
+});
+
+test("提供されていない国別人気チャートのエラーを判定する", () => {
+  assert.equal(isUnavailableVideoChartError({ reason: "notFound" }), true);
+  assert.equal(isUnavailableVideoChartError({ reason: "videoChartNotFound" }), true);
+  assert.equal(isUnavailableVideoChartError({ reason: "backendError" }), false);
 });
 
 test("HTML文字参照とYouTube時間を正規化する", () => {

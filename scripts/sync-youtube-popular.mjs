@@ -6,6 +6,7 @@ import {
   findPairsBelowTarget,
   isPlayableVideo,
   isSearchLimitError,
+  isUnavailableVideoChartError,
   toCatalogVideo,
 } from "./youtube-data-utils.mjs";
 
@@ -106,6 +107,10 @@ for (let index = 0; index < targetPairs.length; index += 1) {
       remaining -= 1;
     }
   } catch (error) {
+    if (isUnavailableVideoChartError(error)) {
+      console.warn(`${pair.country.id}/${pair.genre.id}: この国では該当する人気チャートが提供されていないためスキップしました。`);
+      continue;
+    }
     if (!isSearchLimitError(error)) throw error;
     console.warn("YouTube APIの上限に達したため、ここまでの人気チャート取得結果を保存します。");
     break;

@@ -47,6 +47,10 @@ export function isSearchLimitError(error) {
   return error?.reason === "rateLimitExceeded" || error?.reason === "quotaExceeded";
 }
 
+export function isUnavailableVideoChartError(error) {
+  return error?.reason === "notFound" || error?.reason === "videoChartNotFound";
+}
+
 export function decodeHtml(value = "") {
   const named = { amp: "&", quot: '"', apos: "'", "#39": "'", lt: "<", gt: ">" };
   return value.replace(/&(#x[0-9a-f]+|#\d+|amp|quot|apos|#39|lt|gt);/gi, (match, entity) => {
