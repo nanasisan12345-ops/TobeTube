@@ -61,7 +61,10 @@ if (!apiKey) {
   throw new Error("YOUTUBE_API_KEY が設定されていません。キーはコードに書かず、環境変数またはGitHub ActionsのSecretへ設定してください。");
 }
 
-let videos = originalVideos.map((video) => ({ ...video, countries: [...video.countries] }));
+let videos = originalVideos.map((video) => ({
+  ...video,
+  countries: Array.isArray(video.countries) ? [...video.countries] : [],
+}));
 let videoIndex = new Map(videos.map((video, index) => [video.id, index]));
 const supportedCategoriesByCountry = new Map();
 let addedVideos = 0;
