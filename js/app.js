@@ -33,8 +33,6 @@ const elements = {
   countryGrid: document.querySelector("#country-grid"),
   contentStep: document.querySelector("#content-step"),
   genreGrid: document.querySelector("#genre-grid"),
-  launchButton: document.querySelector("#launch-button"),
-  launchLabel: document.querySelector("#launch-label"),
   surpriseButton: document.querySelector("#surprise-button"),
   standardModeButton: document.querySelector("#standard-mode-button"),
   discoveryModeButton: document.querySelector("#discovery-mode-button"),
@@ -123,7 +121,6 @@ async function init() {
     renderCountries();
     renderGenres();
     updateModeSelection();
-    updateLaunchButton();
     updateCollectionCounts();
     const sharedVideoId = initialUrl.searchParams.get("v");
     const sharedVideo = state.videos.find((video) => video.id === sharedVideoId);
@@ -143,7 +140,6 @@ async function init() {
 }
 
 function bindEvents() {
-  elements.launchButton.addEventListener("click", () => playNext());
   elements.nextButton.addEventListener("click", () => playNext());
   elements.errorNextButton.addEventListener("click", () => playNext());
   elements.favoriteButton.addEventListener("click", toggleFavorite);
@@ -167,7 +163,6 @@ function bindEvents() {
     setMode("genre");
     state.selectedGenre = "all";
     updateGenreSelection();
-    updateLaunchButton();
     playNext();
   });
   elements.standardModeButton.addEventListener("click", () => setMode("genre"));
@@ -286,7 +281,10 @@ function renderGenres() {
     description.dataset.baseDescription = genre.description;
     copy.append(name, description);
     button.append(symbol, copy);
-    button.addEventListener("click", () => selectGenre(genre.id));
+    button.addEventListener("click", async () => {
+      selectGenre(genre.id);
+      await playNext();
+    });
     elements.genreGrid.append(button);
   }
   updateGenreAvailability();
@@ -310,7 +308,6 @@ function selectCountry(countryId, resetChoice = true) {
   applyLocale();
   updateCountrySelection();
   updateModeSelection();
-  updateLaunchButton();
 }
 
 function selectGenre(genreId) {
@@ -324,7 +321,6 @@ function selectGenre(genreId) {
   updateChoiceUrl();
   updateModeSelection();
   updateGenreSelection();
-  updateLaunchButton();
 }
 
 function setMode(mode) {
@@ -341,7 +337,6 @@ function setMode(mode) {
   updateChoiceUrl();
   updateModeSelection();
   updateGenreSelection();
-  updateLaunchButton();
 }
 
 function updateModeSelection() {
@@ -397,29 +392,6 @@ function updateGenreSelection() {
   for (const button of elements.genreGrid.querySelectorAll(".genre-button")) {
     button.setAttribute("aria-pressed", String(button.dataset.genreId === state.selectedGenre));
   }
-}
-
-function updateLaunchButton() {
-  const genre = state.genres.find((item) => item.id === state.selectedGenre);
-  if (!state.selectedCountry) {
-    elements.launchButton.disabled = true;
-    elements.launchLabel.textContent = state.t("selectCountryButton");
-    return;
-  }
-  if (state.mode === "discovery") {
-    elements.launchButton.disabled = getEligibleVideos(state.videos, state.selectedGenre ?? "all", state.selectedCountry).length === 0;
-    elements.launchLabel.textContent = state.t("launchDiscovery");
-    return;
-  }
-  const candidateCount = state.selectedGenre
-    ? getEligibleVideos(state.videos, state.selectedGenre, state.selectedCountry).length
-    : 0;
-  elements.launchButton.disabled = !state.selectedGenre || candidateCount === 0;
-  elements.launchLabel.textContent = state.selectedGenre === "all"
-    ? state.t("launchSurprise")
-    : genre
-      ? state.t("launchGenre", { genre: genreName(genre.id, state.locale, genre.name) })
-      : state.t("chooseGenre");
 }
 
 async function playNext() {
@@ -714,7 +686,6 @@ function renderCatalogError(error) {
   message.className = "collection-empty";
   message.textContent = state.t("dataError");
   elements.countryGrid.append(message);
-  elements.launchButton.disabled = true;
   elements.surpriseButton.disabled = true;
   elements.standardModeButton.disabled = true;
   elements.discoveryModeButton.disabled = true;

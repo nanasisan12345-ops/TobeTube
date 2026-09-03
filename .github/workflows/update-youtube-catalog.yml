@@ -6,7 +6,7 @@ on:
       limit:
         description: Number of country and genre searches
         required: true
-        default: "90"
+        default: "50"
       target_count:
         description: Target videos per country and genre
         required: true
@@ -14,7 +14,7 @@ on:
       discovery_limit:
         description: Number of discovery searches
         required: true
-        default: "5"
+        default: "45"
       discovery_target_count:
         description: Target discovery videos per country and genre
         required: true
@@ -58,9 +58,9 @@ jobs:
       - name: Expand country and genre video pools
         if: env.YOUTUBE_API_KEY != ''
         env:
-          SYNC_LIMIT: ${{ inputs.limit || '90' }}
+          SYNC_LIMIT: ${{ inputs.limit || '50' }}
           SYNC_TARGET_COUNT: ${{ inputs.target_count || '50' }}
-          SYNC_DISCOVERY_LIMIT: ${{ inputs.discovery_limit || '5' }}
+          SYNC_DISCOVERY_LIMIT: ${{ inputs.discovery_limit || '45' }}
           SYNC_DISCOVERY_TARGET_COUNT: ${{ inputs.discovery_target_count || '12' }}
           SYNC_COUNTRY: ${{ inputs.country }}
           SYNC_GENRE: ${{ inputs.genre }}

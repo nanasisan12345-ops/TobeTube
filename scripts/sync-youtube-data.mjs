@@ -15,9 +15,9 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dataPath = join(root, "data");
 const isDryRun = process.argv.includes("--dry-run");
 const limitArgument = process.argv.find((argument) => argument.startsWith("--limit="));
-const requestedLimit = Number.parseInt(limitArgument?.split("=")[1] ?? "90", 10);
-if (!Number.isInteger(requestedLimit) || requestedLimit < 1 || requestedLimit > 95) {
-  throw new Error("--limit は1から95の整数で指定してください。");
+const requestedLimit = Number.parseInt(limitArgument?.split("=")[1] ?? "50", 10);
+if (!Number.isInteger(requestedLimit) || requestedLimit < 0 || requestedLimit > 95) {
+  throw new Error("--limit は0から95の整数で指定してください。");
 }
 const targetCountArgument = process.argv.find((argument) => argument.startsWith("--target-count="));
 const targetCount = Number.parseInt(targetCountArgument?.split("=")[1] ?? "50", 10);
@@ -25,7 +25,7 @@ if (!Number.isInteger(targetCount) || targetCount < 1 || targetCount > 50) {
   throw new Error("--target-count は1から50の整数で指定してください。");
 }
 const discoveryLimitArgument = process.argv.find((argument) => argument.startsWith("--discovery-limit="));
-const discoveryLimit = Number.parseInt(discoveryLimitArgument?.split("=")[1] ?? "5", 10);
+const discoveryLimit = Number.parseInt(discoveryLimitArgument?.split("=")[1] ?? "45", 10);
 if (!Number.isInteger(discoveryLimit) || discoveryLimit < 0 || discoveryLimit > 95) {
   throw new Error("--discovery-limit は0から95の整数で指定してください。");
 }
