@@ -141,6 +141,24 @@ button:disabled {
   gap: 8px;
 }
 
+.header-policy-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 8px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.header-policy-link:hover {
+  border-color: rgba(122, 226, 195, 0.5);
+  color: var(--mint);
+}
+
 .icon-button {
   display: inline-flex;
   min-width: 44px;
@@ -1217,6 +1235,10 @@ kbd {
   .header-action-label,
   .keyboard-hint {
     display: none;
+  }
+
+  .header-policy-link {
+    padding-inline: 11px;
   }
 
   .hero {
