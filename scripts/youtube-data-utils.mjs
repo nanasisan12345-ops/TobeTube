@@ -77,6 +77,30 @@ export function durationBucket(isoDuration) {
   return "long";
 }
 
+export function limitShortVideos(videos, limit = Number.POSITIVE_INFINITY, maximumShortRatio = 0.2) {
+  const effectiveLimit = Number.isFinite(limit)
+    ? Math.max(0, Math.min(Math.floor(limit), videos.length))
+    : videos.length;
+  if (effectiveLimit === 0) return [];
+  if (maximumShortRatio >= 1) return videos.slice(0, effectiveLimit);
+  const standardVideos = videos
+    .filter((video) => durationBucket(video.contentDetails?.duration) !== "short")
+    .slice(0, effectiveLimit);
+  if (maximumShortRatio <= 0 || standardVideos.length >= effectiveLimit) return standardVideos;
+  const maximumShorts = Math.min(
+    effectiveLimit - standardVideos.length,
+    Math.floor(standardVideos.length * maximumShortRatio / (1 - maximumShortRatio)),
+  );
+  const acceptedShortIds = new Set(videos
+    .filter((video) => durationBucket(video.contentDetails?.duration) === "short")
+    .slice(0, maximumShorts)
+    .map((video) => video.id));
+  const acceptedStandardIds = new Set(standardVideos.map((video) => video.id));
+  return videos
+    .filter((video) => acceptedStandardIds.has(video.id) || acceptedShortIds.has(video.id))
+    .slice(0, effectiveLimit);
+}
+
 export function selectCandidate(searchItems, detailsById, usedIds) {
   return selectCandidates(searchItems, detailsById, usedIds, 1)[0] ?? null;
 }
@@ -95,27 +119,26 @@ export function isYouTubeChannelId(value) {
 }
 
 export function selectCandidates(searchItems, detailsById, usedIds, limit = Number.POSITIVE_INFINITY) {
-  const selected = [];
+  const eligible = [];
   const seenIds = new Set(usedIds);
   for (const item of searchItems) {
     const videoId = item?.id?.videoId;
     const details = detailsById.get(videoId);
     if (!videoId || seenIds.has(videoId) || !isPlayableVideo(details)) continue;
-    selected.push(details);
+    eligible.push(details);
     seenIds.add(videoId);
-    if (selected.length >= limit) break;
   }
-  return selected;
+  return limitShortVideos(eligible, limit);
 }
 
 export function selectDiscoveryCandidates(searchItems, detailsById, usedIds, limit = Number.POSITIVE_INFINITY) {
-  return selectCandidates(searchItems, detailsById, usedIds)
+  const ordered = selectCandidates(searchItems, detailsById, usedIds)
     .filter((details) => {
       const viewCount = Number(details.statistics?.viewCount);
       return Number.isSafeInteger(viewCount) && viewCount >= 0;
     })
-    .sort((left, right) => Number(left.statistics.viewCount) - Number(right.statistics.viewCount))
-    .slice(0, limit);
+    .sort((left, right) => Number(left.statistics.viewCount) - Number(right.statistics.viewCount));
+  return limitShortVideos(ordered, limit);
 }
 
 export function toCatalogVideo(details, pair, searchConfig, { discovery = false } = {}) {

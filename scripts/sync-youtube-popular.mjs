@@ -3,12 +3,14 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
+  durationBucket,
   findPairsBelowTarget,
   isPlayableVideo,
   isSearchLimitError,
   isUnavailableVideoChartError,
   toCatalogVideo,
 } from "./youtube-data-utils.mjs";
+import { canAcceptDuration } from "./youtube-channel-utils.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dataPath = join(root, "data");
@@ -68,6 +70,7 @@ let videos = originalVideos.map((video) => (
     : { ...video }
 ));
 let videoIndex = new Map(videos.map((video, index) => [video.id, index]));
+const pairDurationCounts = countPairDurations(videos);
 const supportedCategoriesByCountry = new Map();
 let addedVideos = 0;
 let addedCountryLinks = 0;
@@ -90,9 +93,13 @@ for (let index = 0; index < targetPairs.length; index += 1) {
       maxResults: "50",
     });
     let remaining = targetCount - pair.count;
+    const pairKey = `${pair.country.id}:${pair.genre.id}`;
     for (const details of response.items ?? []) {
       if (remaining <= 0) break;
       if (!isPlayableVideo(details)) continue;
+      const candidateDuration = durationBucket(details.contentDetails?.duration);
+      const durationCounts = pairDurationCounts.get(pairKey) ?? { total: 0, short: 0 };
+      if (!canAcceptDuration(durationCounts, candidateDuration)) continue;
       const existingIndex = videoIndex.get(details.id);
       if (existingIndex !== undefined) {
         const existing = videos[existingIndex];
@@ -100,12 +107,14 @@ for (let index = 0; index < targetPairs.length; index += 1) {
         if (existing.discovery === true || existing.genre !== pair.genre.id || existingCountries.includes(pair.country.id)) continue;
         videos[existingIndex] = { ...existing, countries: [...existingCountries, pair.country.id] };
         addedCountryLinks += 1;
+        pairDurationCounts.set(pairKey, incrementDurationCounts(durationCounts, candidateDuration));
         remaining -= 1;
         continue;
       }
       videos.push(toCatalogVideo(details, pair, searchConfig));
       videoIndex.set(details.id, videos.length - 1);
       addedVideos += 1;
+      pairDurationCounts.set(pairKey, incrementDurationCounts(durationCounts, candidateDuration));
       remaining -= 1;
     }
   } catch (error) {
@@ -129,6 +138,22 @@ const temporaryPath = `${videosPath}.tmp`;
 await writeFile(temporaryPath, `${JSON.stringify(videos, null, 2)}\n`, "utf8");
 await rename(temporaryPath, videosPath);
 console.log(`人気動画${addedVideos}本を追加し、既存動画に国情報を${addedCountryLinks}件追加しました。`);
+
+function countPairDurations(currentVideos) {
+  const counts = new Map();
+  for (const video of currentVideos) {
+    if (video.discovery === true) continue;
+    for (const countryId of video.countries ?? []) {
+      const key = `${countryId}:${video.genre}`;
+      counts.set(key, incrementDurationCounts(counts.get(key), video.duration));
+    }
+  }
+  return counts;
+}
+
+function incrementDurationCounts({ total = 0, short = 0 } = {}, duration) {
+  return { total: total + 1, short: short + (duration === "short" ? 1 : 0) };
+}
 
 async function getSupportedCategories(countryId) {
   if (supportedCategoriesByCountry.has(countryId)) return supportedCategoriesByCountry.get(countryId);

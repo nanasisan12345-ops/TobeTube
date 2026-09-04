@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import {
   buildSearchQuery,
+  durationBucket,
   findDiscoveryPairsBelowTarget,
   findPairsBelowTarget,
   isSearchLimitError,
@@ -12,6 +13,7 @@ import {
   selectDiscoveryCandidates,
   toCatalogVideo,
 } from "./youtube-data-utils.mjs";
+import { canAcceptDuration } from "./youtube-channel-utils.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dataPath = join(root, "data");
@@ -130,6 +132,8 @@ for (let index = 0; index < detailIds.length; index += 50) {
 }
 
 const usedIds = new Set(videos.map((video) => video.id));
+const regularDurationCounts = countPairDurations(videos, false);
+const discoveryDurationCounts = countPairDurations(videos, true);
 const additions = [];
 let discoveryAdditionCount = 0;
 for (const search of discoverySearches) {
@@ -144,8 +148,13 @@ for (const search of discoverySearches) {
     continue;
   }
   for (const candidate of candidates) {
+    const pairKey = `${search.pair.country.id}:${search.pair.genre.id}`;
+    const candidateDuration = durationBucket(candidate.contentDetails?.duration);
+    const durationCounts = discoveryDurationCounts.get(pairKey) ?? { total: 0, short: 0 };
+    if (!canAcceptDuration(durationCounts, candidateDuration)) continue;
     usedIds.add(candidate.id);
     additions.push(toCatalogVideo(candidate, search.pair, searchConfig, { discovery: true }));
+    discoveryDurationCounts.set(pairKey, incrementDurationCounts(durationCounts, candidateDuration));
     discoveryAdditionCount += 1;
   }
 }
@@ -162,8 +171,13 @@ for (const search of searches) {
     continue;
   }
   for (const candidate of candidates) {
+    const pairKey = `${search.pair.country.id}:${search.pair.genre.id}`;
+    const candidateDuration = durationBucket(candidate.contentDetails?.duration);
+    const durationCounts = regularDurationCounts.get(pairKey) ?? { total: 0, short: 0 };
+    if (!canAcceptDuration(durationCounts, candidateDuration)) continue;
     usedIds.add(candidate.id);
     additions.push(toCatalogVideo(candidate, search.pair, searchConfig));
+    regularDurationCounts.set(pairKey, incrementDurationCounts(durationCounts, candidateDuration));
   }
 }
 
@@ -198,6 +212,22 @@ const remainingPairs = findPairsBelowTarget(countries, genres, updatedVideos, ta
 const remainingDiscoveryPairs = findDiscoveryPairsBelowTarget(countries, genres, updatedVideos, discoveryTargetCount).length;
 console.log(`通常${additions.length - discoveryAdditionCount}本、発掘専用${discoveryAdditionCount}本を追加し、${refreshedCount}本の再生数と${channelIdCount}本のチャンネルIDを更新しました。`);
 console.log(`目標未満は通常${remainingPairs}組、発掘${remainingDiscoveryPairs}組です。`);
+
+function countPairDurations(currentVideos, discovery) {
+  const counts = new Map();
+  for (const video of currentVideos) {
+    if ((video.discovery === true) !== discovery) continue;
+    for (const countryId of video.countries ?? []) {
+      const key = `${countryId}:${video.genre}`;
+      counts.set(key, incrementDurationCounts(counts.get(key), video.duration));
+    }
+  }
+  return counts;
+}
+
+function incrementDurationCounts({ total = 0, short = 0 } = {}, duration) {
+  return { total: total + 1, short: short + (duration === "short" ? 1 : 0) };
+}
 
 async function readJson(name) {
   return JSON.parse(await readFile(join(dataPath, name), "utf8"));

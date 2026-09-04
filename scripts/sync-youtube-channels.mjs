@@ -3,6 +3,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
+  durationBucket,
   isPlayableVideo,
   isSearchLimitError,
   isYouTubeChannelId,
@@ -10,6 +11,7 @@ import {
 } from "./youtube-data-utils.mjs";
 import {
   buildChannelJobs,
+  canAcceptDuration,
   matchesCountryOrLanguage,
 } from "./youtube-channel-utils.mjs";
 
@@ -90,6 +92,7 @@ for (let index = 0; index < missingVideos.length; index += 50) {
 
 const processed = new Set(originalState.processed);
 const pairCounts = countPairs(videos);
+const pairDurationCounts = countPairDurations(videos);
 const channelCache = new Map();
 let processedJobs = 0;
 let addedVideos = 0;
@@ -127,6 +130,9 @@ for (const job of eligibleJobs(videos, processed)) {
     if (remaining <= 0) break;
     if (!isPlayableVideo(details) || details.snippet?.categoryId !== categoryId) continue;
     if (!matchesCountryOrLanguage(details, countryConfig.language, channelData.country, job.country.code)) continue;
+    const candidateDuration = durationBucket(details.contentDetails?.duration);
+    const durationCounts = pairDurationCounts.get(pairKey) ?? { total: 0, short: 0 };
+    if (!canAcceptDuration(durationCounts, candidateDuration)) continue;
     const existingIndex = videoIndex.get(details.id);
     if (existingIndex !== undefined) {
       const existing = videos[existingIndex];
@@ -140,6 +146,10 @@ for (const job of eligibleJobs(videos, processed)) {
       addedVideos += 1;
     }
     pairCounts.set(pairKey, (pairCounts.get(pairKey) ?? 0) + 1);
+    pairDurationCounts.set(pairKey, {
+      total: durationCounts.total + 1,
+      short: durationCounts.short + (candidateDuration === "short" ? 1 : 0),
+    });
     remaining -= 1;
   }
   processed.add(job.key);
@@ -181,6 +191,22 @@ function countPairs(currentVideos) {
     for (const countryId of video.countries ?? []) {
       const key = `${countryId}:${video.genre}`;
       counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+  }
+  return counts;
+}
+
+function countPairDurations(currentVideos) {
+  const counts = new Map();
+  for (const video of currentVideos) {
+    if (video.discovery === true) continue;
+    for (const countryId of video.countries ?? []) {
+      const key = `${countryId}:${video.genre}`;
+      const current = counts.get(key) ?? { total: 0, short: 0 };
+      counts.set(key, {
+        total: current.total + 1,
+        short: current.short + (video.duration === "short" ? 1 : 0),
+      });
     }
   }
   return counts;

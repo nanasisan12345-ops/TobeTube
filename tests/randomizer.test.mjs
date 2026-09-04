@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  chooseDurationPool,
   getEligibleVideos,
   preferHighViewCount,
   preferLowViewCount,
@@ -64,6 +65,21 @@ test("通常モードは発掘専用候補を除外する", () => {
   assert.equal(pickRandomVideo(pool, { random: () => 0 }).id, "regular");
 });
 
+test("通常モードは短尺と通常尺があれば通常尺を85パーセントの確率帯で選ぶ", () => {
+  const pool = [
+    { id: "short", duration: "short", viewCount: 100000 },
+    { id: "standard", duration: "medium", viewCount: 100 },
+  ];
+  assert.equal(pickRandomVideo(pool, { random: () => 0.2 }).id, "standard");
+  assert.deepEqual(chooseDurationPool(pool, () => 0.14), [pool[0]]);
+  assert.deepEqual(chooseDurationPool(pool, () => 0.15), [pool[1]]);
+});
+
+test("対象に短尺しかない場合は再生不能にせず短尺を返す", () => {
+  const pool = [{ id: "short", duration: "short", viewCount: 1 }];
+  assert.equal(pickRandomVideo(pool, { random: () => 0.9 }).id, "short");
+});
+
 test("候補を使い切った場合も直前の動画を避ける", () => {
   const picked = pickRandomVideo(videos, {
     genreId: "game",
@@ -108,6 +124,15 @@ test("発掘モードはAPIで収集した発掘専用候補を最優先する",
     { id: "dedicated", genre: "game", viewCount: 10, discovery: true },
   ];
   assert.equal(pickDiscoveryVideo(pool, { random: () => 0 }).id, "dedicated");
+});
+
+test("発掘モードも通常尺を優先し、その中では低再生数を優先する", () => {
+  const pool = [
+    { id: "short-low", duration: "short", viewCount: 1, discovery: true },
+    { id: "standard-low", duration: "medium", viewCount: 10, discovery: true },
+    { id: "standard-high", duration: "long", viewCount: 1000, discovery: true },
+  ];
+  assert.equal(pickDiscoveryVideo(pool, { random: () => 0.2 }).id, "standard-low");
 });
 
 test("発掘モードは可能なら直前と違うジャンルを選ぶ", () => {

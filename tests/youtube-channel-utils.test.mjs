@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   buildChannelJobs,
+  canAcceptDuration,
   channelJobKey,
   languageBase,
   matchesCountryOrLanguage,
@@ -38,4 +39,10 @@ test("国または動画言語の一致を判定する", () => {
   assert.equal(matchesCountryOrLanguage(english, "ja", undefined, "JP"), false);
   assert.equal(matchesCountryOrLanguage({ snippet: {} }, "ja", undefined, "JP"), false);
   assert.equal(languageBase("pt-BR"), "pt");
+});
+
+test("チャンネル収集では短尺比率が20パーセントを超えないようにする", () => {
+  assert.equal(canAcceptDuration({ total: 4, short: 0 }, "short"), true);
+  assert.equal(canAcceptDuration({ total: 5, short: 1 }, "short"), false);
+  assert.equal(canAcceptDuration({ total: 5, short: 5 }, "medium"), true);
 });

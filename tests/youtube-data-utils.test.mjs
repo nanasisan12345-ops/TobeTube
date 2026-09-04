@@ -12,6 +12,7 @@ import {
   isSearchLimitError,
   isUnavailableVideoChartError,
   isYouTubeChannelId,
+  limitShortVideos,
   selectCandidate,
   selectCandidates,
   selectDiscoveryCandidates,
@@ -106,6 +107,17 @@ test("公開中で埋め込み可能な未登録動画を複数選ぶ", () => {
   ]);
   const selected = selectCandidates(items, details, new Set(["aaaaaaaaaaa"]), 2);
   assert.deepEqual(selected.map(({ id }) => id), ["ccccccccccc", "ddddddddddd"]);
+});
+
+test("API検索候補の短尺を最大20パーセントに抑える", () => {
+  const candidates = Array.from({ length: 10 }, (_, index) => ({
+    id: String(index),
+    contentDetails: { duration: index < 6 ? "PT1M" : "PT5M" },
+  }));
+  const selected = limitShortVideos(candidates, 10);
+  assert.equal(selected.length, 5);
+  assert.equal(selected.filter(({ contentDetails }) => durationBucket(contentDetails.duration) === "short").length, 1);
+  assert.deepEqual(limitShortVideos(candidates.slice(0, 6), 6), []);
 });
 
 test("発掘候補を再生数の少ない順で選ぶ", () => {

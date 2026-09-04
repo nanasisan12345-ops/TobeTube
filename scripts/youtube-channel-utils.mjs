@@ -36,3 +36,12 @@ export function matchesCountryOrLanguage(details, targetLanguage, channelCountry
 export function languageBase(value = "") {
   return value.toLowerCase().split("-")[0];
 }
+
+export function canAcceptDuration(
+  { total = 0, short = 0 },
+  candidateDuration,
+  maximumShortRatio = 0.2,
+) {
+  if (candidateDuration !== "short") return true;
+  return (short + 1) / (total + 1) <= maximumShortRatio;
+}

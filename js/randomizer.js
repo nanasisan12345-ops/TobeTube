@@ -1,4 +1,5 @@
 export const DEFAULT_RECENT_LIMIT = 8;
+export const DEFAULT_SHORT_PLAYBACK_RATE = 0.15;
 
 export function getEligibleVideos(videos, genreId = "all", countryId = null, genreIds = null) {
   if (!Array.isArray(videos)) {
@@ -25,7 +26,20 @@ export function pickRandomVideo(
 
   const regular = eligible.filter((video) => video.discovery !== true);
   const regularPool = regular.length > 0 ? regular : eligible;
-  return pickAvoidingRecent(preferHighViewCount(regularPool), recentIds, random);
+  const durationPool = chooseDurationPool(regularPool, random);
+  return pickAvoidingRecent(preferHighViewCount(durationPool), recentIds, random);
+}
+
+export function chooseDurationPool(
+  videos,
+  random = Math.random,
+  shortPlaybackRate = DEFAULT_SHORT_PLAYBACK_RATE,
+) {
+  const shortVideos = videos.filter((video) => video.duration === "short");
+  const standardVideos = videos.filter((video) => video.duration !== "short");
+  if (shortVideos.length === 0) return standardVideos;
+  if (standardVideos.length === 0) return shortVideos;
+  return random() < shortPlaybackRate ? shortVideos : standardVideos;
 }
 
 function pickAvoidingRecent(videos, recentIds, random) {
@@ -58,7 +72,8 @@ export function pickDiscoveryVideo(
 
   const dedicated = eligible.filter((video) => video.discovery === true);
   const sourcePool = dedicated.length > 0 ? dedicated : eligible;
-  const lowViewPool = preferLowViewCount(sourcePool);
+  const durationPool = chooseDurationPool(sourcePool, random);
+  const lowViewPool = preferLowViewCount(durationPool);
   const differentGenre = currentGenre
     ? lowViewPool.filter((video) => video.genre !== currentGenre)
     : lowViewPool;
