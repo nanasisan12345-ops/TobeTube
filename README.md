@@ -20,6 +20,7 @@
 - 無料映画は、公式チャンネルの公開作品またはパブリックドメイン作品を登録しています。
 - GitHub PagesのプロジェクトURL（`https://ユーザー名.github.io/リポジトリ名/`）で動くよう、相対パスで作られています。
 - お気に入り・履歴・テーマは閲覧者のブラウザー内に保存され、外部サーバーには送信しません。
+- 公開中の[プライバシーポリシー](https://nanasisan12345-ops.github.io/TobeTube/privacy.html)と[利用規約](https://nanasisan12345-ops.github.io/TobeTube/terms.html)で、YouTube APIサービスとブラウザーデータの取り扱いを確認できます。
 
 ## フォルダー構成
 

@@ -4,10 +4,16 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const indexPath = join(root, "index.html");
-const html = await readFile(indexPath, "utf8");
+const privacyPath = join(root, "privacy.html");
+const termsPath = join(root, "terms.html");
+const [html, privacyHtml, termsHtml] = await Promise.all([
+  readFile(indexPath, "utf8"),
+  readFile(privacyPath, "utf8"),
+  readFile(termsPath, "utf8"),
+]);
 const errors = [];
 
-for (const requiredPath of ["assets/favicon.svg", "assets/og-image.png", "data/countries.json", "data/genres.json", "data/videos.json", "data/youtube-search.json", "js/i18n.js"]) {
+for (const requiredPath of ["privacy.html", "terms.html", "assets/favicon.svg", "assets/og-image.png", "data/countries.json", "data/genres.json", "data/videos.json", "data/youtube-search.json", "js/i18n.js"]) {
   try {
     await access(join(root, requiredPath));
   } catch {
@@ -30,6 +36,18 @@ for (const snippet of requiredSnippets) {
   if (!html.includes(snippet)) errors.push(`index.html に必須記述がありません: ${snippet}`);
 }
 
+for (const reference of ['./privacy.html', './terms.html']) {
+  if (!html.includes(`href="${reference}"`)) errors.push(`index.html に法的ページへのリンクがありません: ${reference}`);
+}
+
+for (const snippet of ["YouTube APIサービスの利用", "https://policies.google.com/privacy", "ブラウザーデータを削除する方法"]) {
+  if (!privacyHtml.includes(snippet)) errors.push(`privacy.html に監査用の必須記述がありません: ${snippet}`);
+}
+
+for (const snippet of ["YouTube利用規約", "https://www.youtube.com/t/terms", "プライバシーポリシー"]) {
+  if (!termsHtml.includes(snippet)) errors.push(`terms.html に必須記述がありません: ${snippet}`);
+}
+
 const localReferences = [...html.matchAll(/(?:href|src|content)="(\.\/[^"?#]+)(?:[?#][^"]*)?"/g)]
   .map((match) => match[1]);
 
@@ -48,7 +66,7 @@ for (const folder of ["js", "styles", "data"]) {
     sourceFiles.push(join(root, folder, name));
   }
 }
-sourceFiles.push(indexPath);
+sourceFiles.push(indexPath, privacyPath, termsPath);
 
 for (const path of sourceFiles) {
   const source = await readFile(path, "utf8");
