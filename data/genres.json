@@ -160,9 +160,25 @@
     "color": "#775bd6",
     "icon": "gamepad",
     "parentId": "game",
-    "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "RPG", "en": "RPG", "ko": "RPG", "fr": "RPG", "it": "GDR", "hi": "RPG", "pt-BR": "RPG", "de": "Rollenspiele", "es": "RPG", "th": "เกม RPG", "id": "RPG", "vi": "RPG" }
+    "status": "active",
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "RPG",
+      "en": "RPG",
+      "ko": "RPG",
+      "fr": "RPG",
+      "it": "GDR",
+      "hi": "RPG",
+      "pt-BR": "RPG",
+      "de": "Rollenspiele",
+      "es": "RPG",
+      "th": "เกม RPG",
+      "id": "RPG",
+      "vi": "RPG"
+    }
   },
   {
     "id": "fps",
@@ -171,9 +187,25 @@
     "color": "#6653c8",
     "icon": "gamepad",
     "parentId": "game",
-    "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "FPS・シューティング", "en": "FPS & Shooters", "ko": "FPS·슈팅", "fr": "FPS et tir", "it": "FPS e sparatutto", "hi": "FPS और शूटिंग", "pt-BR": "FPS e tiro", "de": "FPS und Shooter", "es": "FPS y disparos", "th": "FPS และเกมยิง", "id": "FPS dan tembak-menembak", "vi": "FPS và bắn súng" }
+    "status": "active",
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "FPS・シューティング",
+      "en": "FPS & Shooters",
+      "ko": "FPS·슈팅",
+      "fr": "FPS et tir",
+      "it": "FPS e sparatutto",
+      "hi": "FPS और शूटिंग",
+      "pt-BR": "FPS e tiro",
+      "de": "FPS und Shooter",
+      "es": "FPS y disparos",
+      "th": "FPS และเกมยิง",
+      "id": "FPS dan tembak-menembak",
+      "vi": "FPS và bắn súng"
+    }
   },
   {
     "id": "indie-games",
@@ -182,9 +214,25 @@
     "color": "#8d65db",
     "icon": "gamepad",
     "parentId": "game",
-    "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "インディーゲーム", "en": "Indie Games", "ko": "인디 게임", "fr": "Jeux indépendants", "it": "Giochi indie", "hi": "इंडी गेम", "pt-BR": "Jogos indie", "de": "Indie-Spiele", "es": "Juegos indie", "th": "เกมอินดี้", "id": "Game indie", "vi": "Trò chơi indie" }
+    "status": "active",
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "インディーゲーム",
+      "en": "Indie Games",
+      "ko": "인디 게임",
+      "fr": "Jeux indépendants",
+      "it": "Giochi indie",
+      "hi": "इंडी गेम",
+      "pt-BR": "Jogos indie",
+      "de": "Indie-Spiele",
+      "es": "Juegos indie",
+      "th": "เกมอินดี้",
+      "id": "Game indie",
+      "vi": "Trò chơi indie"
+    }
   },
   {
     "id": "retro-games",
@@ -193,9 +241,25 @@
     "color": "#9a6bc4",
     "icon": "gamepad",
     "parentId": "game",
-    "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "レトロゲーム", "en": "Retro Games", "ko": "레트로 게임", "fr": "Jeux rétro", "it": "Giochi retrò", "hi": "रेट्रो गेम", "pt-BR": "Jogos retrô", "de": "Retrospiele", "es": "Juegos retro", "th": "เกมเรโทร", "id": "Game retro", "vi": "Trò chơi cổ điển" }
+    "status": "active",
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "レトロゲーム",
+      "en": "Retro Games",
+      "ko": "레트로 게임",
+      "fr": "Jeux rétro",
+      "it": "Giochi retrò",
+      "hi": "रेट्रो गेम",
+      "pt-BR": "Jogos retrô",
+      "de": "Retrospiele",
+      "es": "Juegos retro",
+      "th": "เกมเรโทร",
+      "id": "Game retro",
+      "vi": "Trò chơi cổ điển"
+    }
   },
   {
     "id": "rock",
@@ -204,9 +268,25 @@
     "color": "#d65388",
     "icon": "music",
     "parentId": "music",
-    "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "ロック", "en": "Rock", "ko": "록", "fr": "Rock", "it": "Rock", "hi": "रॉक", "pt-BR": "Rock", "de": "Rock", "es": "Rock", "th": "ร็อก", "id": "Rock", "vi": "Rock" }
+    "status": "active",
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "ロック",
+      "en": "Rock",
+      "ko": "록",
+      "fr": "Rock",
+      "it": "Rock",
+      "hi": "रॉक",
+      "pt-BR": "Rock",
+      "de": "Rock",
+      "es": "Rock",
+      "th": "ร็อก",
+      "id": "Rock",
+      "vi": "Rock"
+    }
   },
   {
     "id": "jazz",
@@ -215,9 +295,25 @@
     "color": "#c85d9b",
     "icon": "music",
     "parentId": "music",
-    "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "ジャズ", "en": "Jazz", "ko": "재즈", "fr": "Jazz", "it": "Jazz", "hi": "जैज़", "pt-BR": "Jazz", "de": "Jazz", "es": "Jazz", "th": "แจ๊ส", "id": "Jazz", "vi": "Jazz" }
+    "status": "active",
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "ジャズ",
+      "en": "Jazz",
+      "ko": "재즈",
+      "fr": "Jazz",
+      "it": "Jazz",
+      "hi": "जैज़",
+      "pt-BR": "Jazz",
+      "de": "Jazz",
+      "es": "Jazz",
+      "th": "แจ๊ส",
+      "id": "Jazz",
+      "vi": "Jazz"
+    }
   },
   {
     "id": "classical-music",
@@ -226,9 +322,25 @@
     "color": "#b667a5",
     "icon": "music",
     "parentId": "music",
-    "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "クラシック音楽", "en": "Classical Music", "ko": "클래식 음악", "fr": "Musique classique", "it": "Musica classica", "hi": "शास्त्रीय संगीत", "pt-BR": "Música clássica", "de": "Klassische Musik", "es": "Música clásica", "th": "ดนตรีคลาสสิก", "id": "Musik klasik", "vi": "Nhạc cổ điển" }
+    "status": "active",
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "クラシック音楽",
+      "en": "Classical Music",
+      "ko": "클래식 음악",
+      "fr": "Musique classique",
+      "it": "Musica classica",
+      "hi": "शास्त्रीय संगीत",
+      "pt-BR": "Música clássica",
+      "de": "Klassische Musik",
+      "es": "Música clásica",
+      "th": "ดนตรีคลาสสิก",
+      "id": "Musik klasik",
+      "vi": "Nhạc cổ điển"
+    }
   },
   {
     "id": "street-food",
@@ -237,9 +349,25 @@
     "color": "#e26a50",
     "icon": "cooking",
     "parentId": "cooking",
-    "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "屋台・ストリートフード", "en": "Street Food", "ko": "길거리 음식", "fr": "Cuisine de rue", "it": "Cibo di strada", "hi": "स्ट्रीट फूड", "pt-BR": "Comida de rua", "de": "Streetfood", "es": "Comida callejera", "th": "อาหารริมทาง", "id": "Makanan kaki lima", "vi": "Ẩm thực đường phố" }
+    "status": "active",
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "屋台・ストリートフード",
+      "en": "Street Food",
+      "ko": "길거리 음식",
+      "fr": "Cuisine de rue",
+      "it": "Cibo di strada",
+      "hi": "स्ट्रीट फूड",
+      "pt-BR": "Comida de rua",
+      "de": "Streetfood",
+      "es": "Comida callejera",
+      "th": "อาหารริมทาง",
+      "id": "Makanan kaki lima",
+      "vi": "Ẩm thực đường phố"
+    }
   },
   {
     "id": "baking",
@@ -248,9 +376,25 @@
     "color": "#d97857",
     "icon": "cooking",
     "parentId": "cooking",
-    "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "パン・お菓子作り", "en": "Baking", "ko": "베이킹", "fr": "Pâtisserie", "it": "Pasticceria", "hi": "बेकिंग", "pt-BR": "Panificação e doces", "de": "Backen", "es": "Repostería", "th": "การอบขนม", "id": "Membuat roti dan kue", "vi": "Làm bánh" }
+    "status": "active",
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "パン・お菓子作り",
+      "en": "Baking",
+      "ko": "베이킹",
+      "fr": "Pâtisserie",
+      "it": "Pasticceria",
+      "hi": "बेकिंग",
+      "pt-BR": "Panificação e doces",
+      "de": "Backen",
+      "es": "Repostería",
+      "th": "การอบขนม",
+      "id": "Membuat roti dan kue",
+      "vi": "Làm bánh"
+    }
   },
   {
     "id": "city-walk",
@@ -259,9 +403,25 @@
     "color": "#238fae",
     "icon": "compass",
     "parentId": "travel",
-    "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "街歩き", "en": "City Walks", "ko": "도시 산책", "fr": "Balades urbaines", "it": "Passeggiate urbane", "hi": "शहर की सैर", "pt-BR": "Passeios urbanos", "de": "Stadtspaziergänge", "es": "Paseos urbanos", "th": "เดินเที่ยวเมือง", "id": "Jalan-jalan kota", "vi": "Dạo phố" }
+    "status": "active",
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "街歩き",
+      "en": "City Walks",
+      "ko": "도시 산책",
+      "fr": "Balades urbaines",
+      "it": "Passeggiate urbane",
+      "hi": "शहर की सैर",
+      "pt-BR": "Passeios urbanos",
+      "de": "Stadtspaziergänge",
+      "es": "Paseos urbanos",
+      "th": "เดินเที่ยวเมือง",
+      "id": "Jalan-jalan kota",
+      "vi": "Dạo phố"
+    }
   },
   {
     "id": "programming",
@@ -270,9 +430,25 @@
     "color": "#397fca",
     "icon": "chip",
     "parentId": "technology",
-    "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "プログラミング", "en": "Programming", "ko": "프로그래밍", "fr": "Programmation", "it": "Programmazione", "hi": "प्रोग्रामिंग", "pt-BR": "Programação", "de": "Programmierung", "es": "Programación", "th": "การเขียนโปรแกรม", "id": "Pemrograman", "vi": "Lập trình" }
+    "status": "active",
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "プログラミング",
+      "en": "Programming",
+      "ko": "프로그래밍",
+      "fr": "Programmation",
+      "it": "Programmazione",
+      "hi": "प्रोग्रामिंग",
+      "pt-BR": "Programação",
+      "de": "Programmierung",
+      "es": "Programación",
+      "th": "การเขียนโปรแกรม",
+      "id": "Pemrograman",
+      "vi": "Lập trình"
+    }
   },
   {
     "id": "ai",
@@ -282,8 +458,24 @@
     "icon": "chip",
     "parentId": "technology",
     "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "AI・人工知能", "en": "AI & Artificial Intelligence", "ko": "AI·인공지능", "fr": "IA et intelligence artificielle", "it": "IA e intelligenza artificiale", "hi": "AI और कृत्रिम बुद्धिमत्ता", "pt-BR": "IA e inteligência artificial", "de": "KI und künstliche Intelligenz", "es": "IA e inteligencia artificial", "th": "AI และปัญญาประดิษฐ์", "id": "AI dan kecerdasan buatan", "vi": "AI và trí tuệ nhân tạo" }
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "AI・人工知能",
+      "en": "AI & Artificial Intelligence",
+      "ko": "AI·인공지능",
+      "fr": "IA et intelligence artificielle",
+      "it": "IA e intelligenza artificiale",
+      "hi": "AI और कृत्रिम बुद्धिमत्ता",
+      "pt-BR": "IA e inteligência artificial",
+      "de": "KI und künstliche Intelligenz",
+      "es": "IA e inteligencia artificial",
+      "th": "AI และปัญญาประดิษฐ์",
+      "id": "AI dan kecerdasan buatan",
+      "vi": "AI và trí tuệ nhân tạo"
+    }
   },
   {
     "id": "language-learning",
@@ -293,8 +485,24 @@
     "icon": "bulb",
     "parentId": "learning",
     "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "語学", "en": "Language Learning", "ko": "언어 학습", "fr": "Apprentissage des langues", "it": "Apprendimento delle lingue", "hi": "भाषा सीखना", "pt-BR": "Aprendizado de idiomas", "de": "Sprachen lernen", "es": "Aprendizaje de idiomas", "th": "เรียนภาษา", "id": "Belajar bahasa", "vi": "Học ngôn ngữ" }
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "語学",
+      "en": "Language Learning",
+      "ko": "언어 학습",
+      "fr": "Apprentissage des langues",
+      "it": "Apprendimento delle lingue",
+      "hi": "भाषा सीखना",
+      "pt-BR": "Aprendizado de idiomas",
+      "de": "Sprachen lernen",
+      "es": "Aprendizaje de idiomas",
+      "th": "เรียนภาษา",
+      "id": "Belajar bahasa",
+      "vi": "Học ngôn ngữ"
+    }
   },
   {
     "id": "football",
@@ -304,8 +512,24 @@
     "icon": "trophy",
     "parentId": "sports",
     "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "サッカー", "en": "Football & Soccer", "ko": "축구", "fr": "Football", "it": "Calcio", "hi": "फ़ुटबॉल", "pt-BR": "Futebol", "de": "Fußball", "es": "Fútbol", "th": "ฟุตบอล", "id": "Sepak bola", "vi": "Bóng đá" }
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "サッカー",
+      "en": "Football & Soccer",
+      "ko": "축구",
+      "fr": "Football",
+      "it": "Calcio",
+      "hi": "फ़ुटबॉल",
+      "pt-BR": "Futebol",
+      "de": "Fußball",
+      "es": "Fútbol",
+      "th": "ฟุตบอล",
+      "id": "Sepak bola",
+      "vi": "Bóng đá"
+    }
   },
   {
     "id": "woodworking",
@@ -315,8 +539,24 @@
     "icon": "hammer",
     "parentId": "making",
     "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "木工", "en": "Woodworking", "ko": "목공", "fr": "Travail du bois", "it": "Lavorazione del legno", "hi": "लकड़ी का काम", "pt-BR": "Marcenaria", "de": "Holzbearbeitung", "es": "Carpintería", "th": "งานไม้", "id": "Pertukangan kayu", "vi": "Đồ gỗ" }
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "木工",
+      "en": "Woodworking",
+      "ko": "목공",
+      "fr": "Travail du bois",
+      "it": "Lavorazione del legno",
+      "hi": "लकड़ी का काम",
+      "pt-BR": "Marcenaria",
+      "de": "Holzbearbeitung",
+      "es": "Carpintería",
+      "th": "งานไม้",
+      "id": "Pertukangan kayu",
+      "vi": "Đồ gỗ"
+    }
   },
   {
     "id": "trains",
@@ -326,8 +566,24 @@
     "icon": "vehicle",
     "parentId": "vehicles",
     "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "鉄道", "en": "Trains & Railways", "ko": "철도", "fr": "Trains et chemins de fer", "it": "Treni e ferrovie", "hi": "रेलवे", "pt-BR": "Trens e ferrovias", "de": "Züge und Eisenbahn", "es": "Trenes y ferrocarriles", "th": "รถไฟ", "id": "Kereta api", "vi": "Đường sắt" }
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "鉄道",
+      "en": "Trains & Railways",
+      "ko": "철도",
+      "fr": "Trains et chemins de fer",
+      "it": "Treni e ferrovie",
+      "hi": "रेलवे",
+      "pt-BR": "Trens e ferrovias",
+      "de": "Züge und Eisenbahn",
+      "es": "Trenes y ferrocarriles",
+      "th": "รถไฟ",
+      "id": "Kereta api",
+      "vi": "Đường sắt"
+    }
   },
   {
     "id": "aviation",
@@ -337,8 +593,24 @@
     "icon": "vehicle",
     "parentId": "vehicles",
     "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "航空・飛行機", "en": "Aviation & Aircraft", "ko": "항공·비행기", "fr": "Aviation et avions", "it": "Aviazione e aerei", "hi": "विमानन", "pt-BR": "Aviação e aviões", "de": "Luftfahrt und Flugzeuge", "es": "Aviación y aviones", "th": "การบินและเครื่องบิน", "id": "Penerbangan dan pesawat", "vi": "Hàng không và máy bay" }
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "航空・飛行機",
+      "en": "Aviation & Aircraft",
+      "ko": "항공·비행기",
+      "fr": "Aviation et avions",
+      "it": "Aviazione e aerei",
+      "hi": "विमानन",
+      "pt-BR": "Aviação e aviões",
+      "de": "Luftfahrt und Flugzeuge",
+      "es": "Aviación y aviones",
+      "th": "การบินและเครื่องบิน",
+      "id": "Penerbangan dan pesawat",
+      "vi": "Hàng không và máy bay"
+    }
   },
   {
     "id": "short-film",
@@ -348,8 +620,24 @@
     "icon": "film",
     "parentId": "movie",
     "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "短編映画", "en": "Short Films", "ko": "단편 영화", "fr": "Courts métrages", "it": "Cortometraggi", "hi": "लघु फ़िल्में", "pt-BR": "Curtas-metragens", "de": "Kurzfilme", "es": "Cortometrajes", "th": "ภาพยนตร์สั้น", "id": "Film pendek", "vi": "Phim ngắn" }
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "短編映画",
+      "en": "Short Films",
+      "ko": "단편 영화",
+      "fr": "Courts métrages",
+      "it": "Cortometraggi",
+      "hi": "लघु फ़िल्में",
+      "pt-BR": "Curtas-metragens",
+      "de": "Kurzfilme",
+      "es": "Cortometrajes",
+      "th": "ภาพยนตร์สั้น",
+      "id": "Film pendek",
+      "vi": "Phim ngắn"
+    }
   },
   {
     "id": "ghost-stories",
@@ -359,8 +647,24 @@
     "icon": "horror",
     "parentId": "horror",
     "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "怪談・心霊", "en": "Ghost Stories", "ko": "괴담·심령", "fr": "Histoires de fantômes", "it": "Storie di fantasmi", "hi": "भूतों की कहानियाँ", "pt-BR": "Histórias de fantasmas", "de": "Geistergeschichten", "es": "Historias de fantasmas", "th": "เรื่องผี", "id": "Cerita hantu", "vi": "Chuyện ma" }
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "怪談・心霊",
+      "en": "Ghost Stories",
+      "ko": "괴담·심령",
+      "fr": "Histoires de fantômes",
+      "it": "Storie di fantasmi",
+      "hi": "भूतों की कहानियाँ",
+      "pt-BR": "Histórias de fantasmas",
+      "de": "Geistergeschichten",
+      "es": "Historias de fantasmas",
+      "th": "เรื่องผี",
+      "id": "Cerita hantu",
+      "vi": "Chuyện ma"
+    }
   },
   {
     "id": "wildlife",
@@ -370,8 +674,24 @@
     "icon": "paw",
     "parentId": "animals",
     "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "野生動物", "en": "Wildlife", "ko": "야생동물", "fr": "Faune sauvage", "it": "Fauna selvatica", "hi": "वन्यजीव", "pt-BR": "Vida selvagem", "de": "Wildtiere", "es": "Vida silvestre", "th": "สัตว์ป่า", "id": "Satwa liar", "vi": "Động vật hoang dã" }
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "野生動物",
+      "en": "Wildlife",
+      "ko": "야생동물",
+      "fr": "Faune sauvage",
+      "it": "Fauna selvatica",
+      "hi": "वन्यजीव",
+      "pt-BR": "Vida selvagem",
+      "de": "Wildtiere",
+      "es": "Vida silvestre",
+      "th": "สัตว์ป่า",
+      "id": "Satwa liar",
+      "vi": "Động vật hoang dã"
+    }
   },
   {
     "id": "pets",
@@ -381,7 +701,23 @@
     "icon": "paw",
     "parentId": "animals",
     "status": "candidate",
-    "activation": { "minimumVideos": 12, "minimumCountries": 3 },
-    "names": { "ja": "犬・猫・ペット", "en": "Dogs, Cats & Pets", "ko": "개·고양이·반려동물", "fr": "Chiens, chats et animaux", "it": "Cani, gatti e animali", "hi": "कुत्ते, बिल्लियाँ और पालतू जानवर", "pt-BR": "Cães, gatos e pets", "de": "Hunde, Katzen und Haustiere", "es": "Perros, gatos y mascotas", "th": "สุนัข แมว และสัตว์เลี้ยง", "id": "Anjing, kucing, dan peliharaan", "vi": "Chó, mèo và thú cưng" }
+    "activation": {
+      "minimumVideos": 12,
+      "minimumCountries": 3
+    },
+    "names": {
+      "ja": "犬・猫・ペット",
+      "en": "Dogs, Cats & Pets",
+      "ko": "개·고양이·반려동물",
+      "fr": "Chiens, chats et animaux",
+      "it": "Cani, gatti e animali",
+      "hi": "कुत्ते, बिल्लियाँ और पालतू जानवर",
+      "pt-BR": "Cães, gatos e pets",
+      "de": "Hunde, Katzen und Haustiere",
+      "es": "Perros, gatos y mascotas",
+      "th": "สุนัข แมว และสัตว์เลี้ยง",
+      "id": "Anjing, kucing, dan peliharaan",
+      "vi": "Chó, mèo và thú cưng"
+    }
   }
 ]
