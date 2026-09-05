@@ -4,6 +4,7 @@ import { genreSelectionIds, groupPublicGenres, isPublicGenre, publicGenres } fro
 import { YouTubePlayerController } from "./player.js";
 import { getEligibleVideos, pickDiscoveryVideo, pickRandomVideo, pushRecentId } from "./randomizer.js?v=20260904a";
 import { createStorage } from "./storage.js";
+import { profileCopy, renderTasteProfile } from "./taste-profile-view.js?v=20260905";
 
 const iconPaths = {
   gamepad: '<path d="M8 10h8a5 5 0 0 1 4.8 6.5l-.6 2a2.5 2.5 0 0 1-4.2 1l-1.3-1.5H9.3L8 19.5a2.5 2.5 0 0 1-4.2-1l-.6-2A5 5 0 0 1 8 10Z"/><path d="M7 13v4M5 15h4M16.5 14h.01M18.5 16h.01"/>',
@@ -54,6 +55,8 @@ const elements = {
   collectionDialog: document.querySelector("#collection-dialog"),
   collectionCloseButton: document.querySelector("#collection-close-button"),
   favoritesTab: document.querySelector("#favorites-tab"),
+  profileTab: document.querySelector("#profile-tab"),
+  profilePanel: document.querySelector("#profile-panel"),
   historyTab: document.querySelector("#history-tab"),
   favoritesPanel: document.querySelector("#favorites-panel"),
   historyPanel: document.querySelector("#history-panel"),
@@ -149,6 +152,16 @@ function bindEvents() {
   elements.collectionButton.addEventListener("click", openCollection);
   elements.collectionCloseButton.addEventListener("click", () => elements.collectionDialog.close());
   elements.favoritesTab.addEventListener("click", () => selectCollectionTab("favorites"));
+  elements.profileTab.addEventListener("click", () => selectCollectionTab("profile"));
+  elements.collectionDialog.querySelector('[role="tablist"]').addEventListener("keydown", (event) => {
+    const names = ["profile", "favorites", "history"];
+    const index = names.findIndex(name => elements[`${name}Tab`] === event.target);
+    if (index < 0 || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === "Home" ? 0 : event.key === "End" ? 2 : (index + (event.key === "ArrowRight" ? 1 : 2)) % 3;
+    selectCollectionTab(names[next]);
+    elements[`${names[next]}Tab`].focus();
+  });
   elements.historyTab.addEventListener("click", () => selectCollectionTab("history"));
   elements.collectionDialog.addEventListener("click", (event) => {
     if (event.target === elements.collectionDialog) {
@@ -173,6 +186,7 @@ function bindEvents() {
 function applyLocale() {
   state.locale = localeForCountry(state.selectedCountry);
   state.t = createTranslator(state.locale);
+  elements.profileTab.textContent = (profileCopy[state.locale] ?? profileCopy.en)[0];
   document.documentElement.lang = state.locale;
   document.title = state.t("title");
   document.querySelector('meta[name="description"]')?.setAttribute("content", state.t("description"));
@@ -515,6 +529,7 @@ function toggleFavorite() {
   renderCurrentVideo(state.currentVideo);
   updateCollectionCounts();
   showToast(isFavorite ? state.t("removedFavorite") : state.t("addedFavorite"));
+  if (elements.collectionDialog.open) renderCollection();
 }
 
 async function shareCurrentVideo() {
@@ -559,19 +574,21 @@ function updateShareUrl(video) {
 
 function openCollection() {
   renderCollection();
-  selectCollectionTab("favorites");
+  selectCollectionTab("profile");
   elements.collectionDialog.showModal();
 }
 
 function selectCollectionTab(tabName) {
-  const showFavorites = tabName === "favorites";
-  elements.favoritesTab.setAttribute("aria-selected", String(showFavorites));
-  elements.historyTab.setAttribute("aria-selected", String(!showFavorites));
-  elements.favoritesPanel.hidden = !showFavorites;
-  elements.historyPanel.hidden = showFavorites;
+  for (const name of ["profile", "favorites", "history"]) {
+    const selected = name === tabName;
+    elements[`${name}Tab`].setAttribute("aria-selected", String(selected));
+    elements[`${name}Tab`].tabIndex = selected ? 0 : -1;
+    elements[`${name}Panel`].hidden = !selected;
+  }
 }
 
 function renderCollection() {
+  renderTasteProfile(elements.profilePanel, state.saved.favorites, state.videos, state.genres, state.locale);
   renderVideoList(elements.favoritesPanel, state.saved.favorites, state.t("emptyFavorites"), true);
   renderVideoList(elements.historyPanel, state.saved.history, state.t("emptyHistory"), false);
   updateCollectionCounts();

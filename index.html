@@ -22,8 +22,9 @@
     <meta name="twitter:image" content="https://nanasisan12345-ops.github.io/TobeTube/assets/og-image.png">
     <title>TobeTube | 国とジャンルから動画をランダム発掘</title>
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="./styles/main.css?v=20260904">
-    <script type="module" src="./js/app.js?v=20260904a"></script>
+    <link rel="stylesheet" href="./styles/main.css?v=20260905">
+    <link rel="stylesheet" href="./styles/taste-profile.css?v=20260905">
+    <script type="module" src="./js/app.js?v=20260905"></script>
   </head>
   <body>
     <a class="skip-link" href="#main-content" data-i18n="skip">メインコンテンツへ移動</a>
@@ -180,10 +181,12 @@
         </button>
       </div>
       <div class="dialog-tabs" role="tablist" aria-label="コレクションの種類" data-i18n-aria-label="collectionType">
-        <button id="favorites-tab" role="tab" aria-selected="true" aria-controls="favorites-panel" type="button"><span data-i18n="favorites">お気に入り</span> <span id="favorite-count">0</span></button>
+        <button id="profile-tab" role="tab" aria-selected="true" aria-controls="profile-panel" type="button">好みのプロフィール</button>
+        <button id="favorites-tab" role="tab" aria-selected="false" aria-controls="favorites-panel" tabindex="-1" type="button"><span data-i18n="favorites">お気に入り</span> <span id="favorite-count">0</span></button>
         <button id="history-tab" role="tab" aria-selected="false" aria-controls="history-panel" type="button"><span data-i18n="recent">最近見た動画</span> <span id="history-count">0</span></button>
       </div>
-      <div class="collection-panel" id="favorites-panel" role="tabpanel" aria-labelledby="favorites-tab"></div>
+      <div class="collection-panel" id="profile-panel" role="tabpanel" aria-labelledby="profile-tab" tabindex="0"></div>
+      <div class="collection-panel" id="favorites-panel" role="tabpanel" aria-labelledby="favorites-tab" tabindex="0" hidden></div>
       <div class="collection-panel" id="history-panel" role="tabpanel" aria-labelledby="history-tab" hidden></div>
     </dialog>
 

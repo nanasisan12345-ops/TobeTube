@@ -1,0 +1,51 @@
+.collection-dialog { width: min(calc(100% - 24px), 940px); max-height: calc(100svh - 24px); }
+.collection-dialog[open] { display: flex; flex-direction: column; }
+.dialog-header, .dialog-tabs { flex-shrink: 0; }
+.dialog-tabs { flex-wrap: wrap; }
+.dialog-tabs button { min-height: 44px; }
+.collection-panel { min-height: 0; max-height: none; overscroll-behavior: contain; }
+#profile-panel { padding-top: 20px; }
+.taste-card {
+  padding: clamp(20px, 3vw, 32px);
+  border: 1px solid #39425b;
+  border-radius: 18px;
+  background: radial-gradient(ellipse at 10% 40%, #18384199, transparent 58%), linear-gradient(135deg, #192337, #121624 70%);
+  color: #f5f8ff;
+}
+.taste-kicker { margin: 0 0 10px; color: #87efda; font: 700 11px/1.5 "Segoe UI", sans-serif; letter-spacing: .24em; }
+.taste-title { margin: 0; font-size: clamp(1.4rem, 3vw, 2.2rem); letter-spacing: -.04em; line-height: 1.35; overflow-wrap: anywhere; }
+.taste-status { display: inline-block; margin: 12px 0 0; padding: 4px 10px; border: 1px solid #64735a; border-radius: 6px; color: #dcebba; font-size: .72rem; }
+.taste-body { display: grid; grid-template-columns: 1.1fr 1fr; gap: 30px; align-items: center; margin: 30px 0; }
+.taste-chart { position: relative; width: 100%; max-width: 380px; margin: auto; }
+.taste-chart svg { display: block; width: 100%; overflow: visible; }
+.taste-grid { fill: none; stroke: #597184; stroke-opacity: .48; stroke-width: 1; }
+.taste-shape { fill: #7ae2c333; stroke: #8ef5d7; stroke-width: 2; stroke-linejoin: round; filter: drop-shadow(0 0 8px #7ae2c355); }
+.taste-dot { fill: #c2ffe9; stroke: #182b35; stroke-width: 1.5; }
+.taste-chart-label { position: absolute; transform: translate(-50%, -50%); width: 88px; max-width: 27%; text-align: center; font-size: .69rem; line-height: 1.35; color: #c8d6e4; overflow-wrap: anywhere; }
+.taste-stats { display: flex; gap: 28px; padding-bottom: 18px; margin-bottom: 18px; border-bottom: 1px solid #354056; }
+.taste-stats strong { display: block; font: 600 2.4rem/1.2 "Segoe UI", sans-serif; letter-spacing: -.04em; }
+.taste-stats span { display: block; margin-top: 4px; font-size: .68rem; color: #afbdd0; }
+.taste-meters { display: grid; gap: 10px; padding: 0; margin: 0; list-style: none; }
+.taste-meter { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: .76rem; }
+.taste-meter strong { color: #9aedd4; font-variant-numeric: tabular-nums; }
+.taste-track { grid-column: 1 / -1; height: 4px; border-radius: 4px; background: #344052; overflow: hidden; }
+.taste-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #57b5c4, #acfed8); }
+.taste-empty { color: #c1ccda; font-size: .87rem; }
+.taste-mix { padding-top: 22px; border-top: 1px solid #354056; }
+.taste-mix h4 { margin: 0 0 12px; font-size: .8rem; font-weight: 600; }
+.taste-genres { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.taste-genres li { display: flex; gap: 14px; align-items: center; max-width: 100%; padding: 7px 12px; background: #ffffff07; border: 1px solid #435066; border-radius: 7px; font-size: .74rem; overflow-wrap: anywhere; }
+.taste-genres strong { flex-shrink: 0; color: #a4ead7; font-size: .68rem; font-variant-numeric: tabular-nums; }
+.taste-method { margin-top: 24px; color: #adbacd; font-size: .69rem; line-height: 1.8; }
+.taste-method p { margin: 6px 0 0; }
+.collection-panel:focus-visible { outline: 2px solid var(--focus); outline-offset: -3px; }
+@media (max-width: 600px) {
+  .dialog-header { padding: 18px 18px 12px; }
+  .dialog-tabs { gap: 3px; padding-bottom: 10px; }
+  .dialog-tabs button { padding: 8px; font-size: .72rem; }
+  #profile-panel { padding: 12px 12px 18px; }
+  .taste-card { padding: 22px 18px; }
+  .taste-body { grid-template-columns: 1fr; gap: 28px; margin: 28px 0; }
+  .taste-chart { max-width: 320px; }
+  .taste-stats { justify-content: space-between; }
+}
