@@ -457,7 +457,7 @@
     "color": "#507de0",
     "icon": "chip",
     "parentId": "technology",
-    "status": "candidate",
+    "status": "active",
     "activation": {
       "minimumVideos": 12,
       "minimumCountries": 3
@@ -484,7 +484,7 @@
     "color": "#45956e",
     "icon": "bulb",
     "parentId": "learning",
-    "status": "candidate",
+    "status": "active",
     "activation": {
       "minimumVideos": 12,
       "minimumCountries": 3
@@ -511,7 +511,7 @@
     "color": "#2c9b66",
     "icon": "trophy",
     "parentId": "sports",
-    "status": "candidate",
+    "status": "active",
     "activation": {
       "minimumVideos": 12,
       "minimumCountries": 3
@@ -538,7 +538,7 @@
     "color": "#c66c45",
     "icon": "hammer",
     "parentId": "making",
-    "status": "candidate",
+    "status": "active",
     "activation": {
       "minimumVideos": 12,
       "minimumCountries": 3
@@ -565,7 +565,7 @@
     "color": "#318c9d",
     "icon": "vehicle",
     "parentId": "vehicles",
-    "status": "candidate",
+    "status": "active",
     "activation": {
       "minimumVideos": 12,
       "minimumCountries": 3
@@ -592,7 +592,7 @@
     "color": "#408fa1",
     "icon": "vehicle",
     "parentId": "vehicles",
-    "status": "candidate",
+    "status": "active",
     "activation": {
       "minimumVideos": 12,
       "minimumCountries": 3
@@ -619,7 +619,7 @@
     "color": "#c95068",
     "icon": "film",
     "parentId": "movie",
-    "status": "candidate",
+    "status": "active",
     "activation": {
       "minimumVideos": 12,
       "minimumCountries": 3
@@ -646,7 +646,7 @@
     "color": "#765cae",
     "icon": "horror",
     "parentId": "horror",
-    "status": "candidate",
+    "status": "active",
     "activation": {
       "minimumVideos": 12,
       "minimumCountries": 3
@@ -673,7 +673,7 @@
     "color": "#ca873b",
     "icon": "paw",
     "parentId": "animals",
-    "status": "candidate",
+    "status": "active",
     "activation": {
       "minimumVideos": 12,
       "minimumCountries": 3
@@ -700,7 +700,7 @@
     "color": "#dc9946",
     "icon": "paw",
     "parentId": "animals",
-    "status": "candidate",
+    "status": "active",
     "activation": {
       "minimumVideos": 12,
       "minimumCountries": 3
