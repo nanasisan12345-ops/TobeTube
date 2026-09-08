@@ -280,14 +280,35 @@ function renderGenres() {
   const allArea = document.createElement("div");
   allArea.className = "genre-all-area";
   allArea.append(createGenreButton(allGenre));
-  elements.genreGrid.append(allArea);
+  const directory = document.createElement("nav");
+  directory.className = "genre-directory";
+  directory.dataset.i18nAriaLabel = "genreMode";
+  directory.setAttribute("aria-label", state.t("genreMode"));
+  elements.genreGrid.append(directory, allArea);
 
   for (const group of groupPublicGenres(state.genres)) {
     const section = document.createElement("section");
     section.className = "genre-group";
     const heading = document.createElement("h3");
+    heading.id = `genre-group-${group.id}`;
+    heading.tabIndex = -1;
     heading.dataset.genreGroup = group.id;
     heading.textContent = genreGroupName(group.id, state.locale);
+    section.setAttribute("aria-labelledby", heading.id);
+    const jump = document.createElement("button");
+    jump.type = "button";
+    jump.className = "genre-directory-button";
+    jump.setAttribute("aria-controls", heading.id);
+    const label = document.createElement("span");
+    label.dataset.genreGroup = group.id;
+    label.textContent = heading.textContent;
+    jump.append(label);
+    jump.insertAdjacentHTML("beforeend", '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16m-6-6 6 6 6-6"/></svg>');
+    jump.addEventListener("click", () => {
+      heading.focus({ preventScroll: true });
+      heading.scrollIntoView({ block: "start", behavior: "instant" });
+    });
+    directory.append(jump);
     const list = document.createElement("div");
     list.className = "genre-group-grid";
     list.append(...group.genres.map(createGenreButton));
